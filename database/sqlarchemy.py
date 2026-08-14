@@ -26,7 +26,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # existe todavía, lo crea automáticamente. Si ya existe, lo abre tal cual.
 # "sqlite:///" es el prefijo que le dice a SQLAlchemy qué motor usar
 # (en este caso SQLite); el nombre después de eso es el archivo.
-engine = create_engine("sqlite:///usuarios_sqlalchemy.db", echo=False)
+engine = create_engine("sqlite:///usuarios.db", echo=True)
 
 # declarative_base() crea una "clase base" de la cual van a heredar
 # todas las tablas que definas. Es lo que conecta tus clases de Python

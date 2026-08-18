@@ -11,6 +11,7 @@ la misma lógica en dos lugares distintos.
 """
 
 from datetime import datetime
+from pathlib import Path
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,7 +21,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # CONEXIÓN Y MODELO
 # ===========================================================================
 
-engine = create_engine("sqlite:///usuarios.db", echo=False)
+# Path(__file__) es la ruta de ESTE archivo (logica_usuario.py).
+# .parent es la carpeta que lo contiene, sin importar desde dónde se
+# ejecute el programa. Así, "usuarios.db" siempre se busca al lado de
+# este archivo — ya no depende de la carpeta desde donde arranques la
+# terminal (que era justo la causa del problema que tenías).
+CARPETA_PROYECTO = Path(__file__).parent
+RUTA_BASE_DATOS = CARPETA_PROYECTO / "usuarios.db"
+
+engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
 
 
 class Base(DeclarativeBase):

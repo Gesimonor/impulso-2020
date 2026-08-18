@@ -4,7 +4,7 @@ Versión del login conectada directamente a tu tabla usuarios.db
 hechas en logica_usuario.py.
 
 Correr con:  python app_simple.py
-Abrir en el navegador:  http://localhost:5000
+Abrir en el navegador:  http://127.0.0.1:5000
 """
 
 from flask import Flask, render_template, request, redirect, url_for, flash

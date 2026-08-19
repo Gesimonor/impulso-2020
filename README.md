@@ -1,1 +1,2 @@
-# prueba
+# pip install -r requirements.txt
+

@@ -15,24 +15,30 @@ from flask_login import (
 
 from logica_usuario import Usuario, SessionLocal, buscar_por_correo, verificar_contrasena
 
-app = Flask(__name__)
-app.secret_key = "cambia-esto-por-una-clave-secreta-real"
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = "login"
-login_manager.login_message = "Inicia sesión para continuar."
+app = Flask(__name__) # Esta variable le indica a Flask como se llama el archivo y donde buscar los archivos y OJO siempre los html con Flask deben llamarsen templates osea la carpeta porque si no FLask no sabe donde buscar los htmkl
+app.secret_key = "cambia-esto-por-una-clave-secreta-real" # y esto es super iportante, resulta que las Cookies de una web guardan los datos miimos para identificarte como ID, rol y correo por ejemplo, si no esta cifrado un hacker tendria axeceso a eso y no lo queremos
+#ESTO ES CONFIGURACION DE SEGURIDAD QUE VALIDA QUE SIEMPRE SE LOGUEN Y SI NO PUES NO PUEDES ENTRAR A LA APP
+login_manager = LoginManager() #es el gestor de los usuario, Flask por si solo no sabe de usuarios y pide ayuda a LoginManager para hacer como esa duanas en la mpagina web
+login_manager.init_app(app) #este instala a LoginManager dentro de la pagina web    
+login_manager.login_view = "login" #esta es super importante, si alguien intenta entrar sin estar logeado esta linia dice que automaticamente valla a login.html
+login_manager.login_message = "Inicia sesión para continuar." # y este es un mensajito para recordarle que debe hacer login para usar la app
 
 
 class UsuarioSesion(UserMixin):
-    """Envoltorio que necesita Flask-Login para manejar la sesión.
-    No cambia nada de tu tabla, solo la hace compatible."""
-    def __init__(self, usuario: Usuario):
-        self.id = usuario.id
-        self.nombre = usuario.nombre
-        self.apellido = usuario.apellido
-        self.correo = usuario.correo
-        self.rol = usuario.rol
+""" OJO leer porque esto explica el porque de UserMixin, es un requisieto importante para UsuarioSession pueda ser el puente estre Flask y la BD
+Flask-Login exige:      UserMixin responde:
+¿esta autenticado?      is_authenticated() : Pregunta si inició sesión correctamente:
+¿cuenta activa?         is_active() : UserMixin responde True por defecto — asume que todas las cuentas están activas. (pero si quisieras bloquearlas agregariamos una columna de activo Si o No)
+¿es anónimo?            is_anonymous() : Un usuario anónimo es alguien que no inició sesión — solo está navegando o que ya inicio y no mustra "Inciio sesion" si no "Bienenido Luz Stella"
+¿cuál es su id?         get_id() : el Id de la base y se usa para muchas cosas :)
+"""
+    def __init__(self, datos_usuario: Usuario):#Aqui SQLalchemy le entrega a Flask un usuario y de la clase Usuario que ya sabesmos que hablamos de la misma tabla, usuario es un nombre ejempl, no debe ser el mismo si no quieres
+        self.id = datos_usuario.id
+        self.nombre = datos_usuario.nombre
+        self.apellido = datos_usuario.apellido
+        self.correo = datos_usuario.correo
+        self.rol = datos_usuario.rol
+        
 
 
 @login_manager.user_loader

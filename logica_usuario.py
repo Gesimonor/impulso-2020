@@ -73,7 +73,7 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 def crear_usuario(nombre, apellido, rol, correo, contrasena_texto_plano):
     db = SessionLocal()
     nuevo_usuario = Usuario(
-        nombre=nombre,
+        nombre=nombre, #el pirmero nombre es el nombre de la base y el segundo es el nombre que trae por ejem "Luz Stella"
         apellido=apellido,
         rol=rol,
         correo=correo,
@@ -88,33 +88,33 @@ def crear_usuario(nombre, apellido, rol, correo, contrasena_texto_plano):
 
 def listar_usuarios():
     db = SessionLocal()
-    todos = db.query(Usuario).all()
+    todos = db.query(Usuario).all() #Ojo aqui se trae Usuario ls clase per porwue estamos trabajando SQL ORM que es a base de objetos y la tabla usuarios es un objeto llamado Usuario
     db.close()
     return todos
 
 
 def buscar_por_correo(correo):
     db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()
+    usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO al filtro toca parametrizarle la condicion y para indicar una columna la debes traer llamando la clase y Fisrt() aunque su principal funcion es tarer el primero tambien es la maners en la que entrega el resuktado , da un objeto y no una lista porque te ahorrar la desenpaquetada
     db.close()
     return usuario
 
 
 def verificar_contrasena(correo, contrasena_escrita):
-    usuario = buscar_por_correo(correo)
-    if usuario is None:
+    usuario = buscar_por_correo(correo) #Aqui valida usando la funcion de arriba para validar que ese correo exista y te devuelve el corrreo de la base 
+    if usuario is None: #SI el corrreo no existe usuario seria none y segun el if si la respueta en none pues no hagas nada
         return False
-    return check_password_hash(usuario.contrasena_hash, contrasena_escrita)
+    return check_password_hash(usuario.contrasena_hash, contrasena_escrita) #pero si si pues valida la contraseña y esto devuelve un boolenao True o False 
 
 
 def actualizar_usuario(correo, nuevo_nombre=None, nuevo_apellido=None, nuevo_rol=None):
     db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()
+    usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO esto es todo el usuario
     if usuario is None:
         db.close()
         return None
 
-    if nuevo_nombre:
+    if nuevo_nombre: #nuevo_nombre si no trae dato es None porqeu asi esta actulizar_usuario, si el IF ribe None pues es False y no se ejecuta el IF sencillo
         usuario.nombre = nuevo_nombre
     if nuevo_apellido:
         usuario.apellido = nuevo_apellido
@@ -128,12 +128,12 @@ def actualizar_usuario(correo, nuevo_nombre=None, nuevo_apellido=None, nuevo_rol
 
 def cambiar_contrasena(correo, nueva_contrasena_texto_plano):
     db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()
+    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
     if usuario is None:
         db.close()
         return False
 
-    usuario.contrasena_hash = generate_password_hash(nueva_contrasena_texto_plano)
+    usuario.contrasena_hash = generate_password_hash(nueva_contrasena_texto_plano)#OJO esto es todo el usuario
     db.commit()
     db.close()
     return True
@@ -141,12 +141,12 @@ def cambiar_contrasena(correo, nueva_contrasena_texto_plano):
 
 def eliminar_usuario(correo):
     db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()
+    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
     if usuario is None:
         db.close()
         return False
 
-    db.delete(usuario)
+    db.delete(usuario) #eliina el filtro
     db.commit()
     db.close()
     return True

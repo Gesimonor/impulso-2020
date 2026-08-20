@@ -139,6 +139,10 @@
 <body>
  
     <div class="login-card">
+                <!-- Muestra errores de login -->
+        {% for mensaje in get_flashed_messages() %}
+            <p style="color: red;">{{ mensaje }}</p>
+        {% endfor %}
  
         <!-- ============================================================
              LOGO
@@ -148,7 +152,7 @@
              (así lo verás cuando conectemos esto con Flask).
              ============================================================ -->
         <div class="logo-container">
-            <img src="https://via.placeholder.com/80" alt="Logo de la empresa" class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}">
         </div>
  
         <h2>Bienvenido</h2>
@@ -159,7 +163,7 @@
              no apunta a ningún lado real). Cuando lo conectemos a Flask,
              esto se vuelve: action="{{ url_for('login') }}"
              ============================================================ -->
-        <form action="#" method="POST">
+        <form action="{{ url_for('login') }}" method="POST">
  
             <!-- CAMPO DE USUARIO/CORREO
                  name="email"  <-- ESTE es el nombre que va a leer Flask

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App - Panel Principal</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+
+  body {
+    display: flex;
+    height: 100vh;
+    background-color: #f7f7fb;
+  }
+
+  /* Barra lateral */
+  .sidebar {
+    width: 220px;
+    background-color: #ffffff;
+    border-right: 1px solid #e8e8f0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.03);
+  }
+
+  .sidebar .logo {
+    text-align: center;
+    font-weight: 700;
+    font-size: 20px;
+    color: #e8590c;
+    margin-bottom: 30px;
+    padding: 0 20px;
+  }
+
+  .sidebar nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .sidebar a {
+    text-decoration: none;
+    color: #555;
+    padding: 14px 24px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar a:hover {
+    background-color: #fff3e6;
+    color: #e8590c;
+  }
+
+  .sidebar a.active {
+    background: linear-gradient(90deg, #fff3e6, #ffffff);
+    color: #e8590c;
+    border-left: 4px solid #f76707;
+    font-weight: 600;
+  }
+
+  .sidebar .icon {
+    width: 20px;
+    text-align: center;
+  }
+
+  .sidebar .salir {
+    margin-top: auto;
+    color: #d9480f;
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+  }
+
+  .sidebar .salir:hover {
+    background-color: #ffe3e3;
+  }
+
+  /* Contenido principal */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    background: linear-gradient(120deg, #ff9a56, #ff6f91, #ffb648);
+    color: white;
+    padding: 24px 32px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  }
+
+  header h1 {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  header p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
+
+  .content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    color: #444;
+  }
+
+  .card h2 {
+    color: #d9480f;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">Mi App</div>
+    <nav>
+      <a href="#" class="active"><span class="icon">🏠</span> Inicio</a>
+      <a href="#"><span class="icon">🧾</span> Facturas</a>
+      <a href="#"><span class="icon">🧑‍🤝‍🧑</span> Pacientes</a>
+      <a href="#"><span class="icon">💊</span> Fórmulas</a>
+      <a href="#"><span class="icon">📅</span> Citas</a>
+      <a href="#" class="salir"><span class="icon">🚪</span> Salir</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header>
+      <h1>Panel Principal</h1>
+      <p>Bienvenida de nuevo</p>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <h2>Inicio</h2>
+        <p>Aquí puedes colocar el contenido correspondiente a cada sección seleccionada en el menú lateral.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

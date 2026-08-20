@@ -40,11 +40,11 @@ Flask-Login exige:      UserMixin responde:
         self.rol = datos_usuario.rol
         
 
-
-@login_manager.user_loader
+#Ojo importante esta porque valida que el usuario sigue en loguin, si hace un movimiento dentro de la app valida que el siga en login y aparte que exista en la base
+@login_manager.user_loader #Esta vaina es un Decorador, para que sirve para meter una funcion a otra funcion. EN este caso vamos a usar la funcion de login_manager para la carga_usuario, y se coloca asi pegadita con un @
 def cargar_usuario(user_id):
     db = SessionLocal()
-    usuario = db.get(Usuario, int(user_id))
+    usuario = db.get(Usuario, int(user_id)) #esto es esto db.query(Usuario).filter(Usuario.id == user_id).first() solo que como buena practica se usa Get
     db.close()
     return UsuarioSesion(usuario) if usuario else None
 

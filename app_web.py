@@ -5,6 +5,20 @@ hechas en logica_usuario.py.
 
 Correr con:  python app_simple.py
 Abrir en el navegador:  http://127.0.0.1:5000
+Info de puertos importante
+0 - 1023    → reservados del sistema, no tocar 
+1024 - 65535 → libres para usar 
+
+Info de IP 
+El rango 127.x.x.x está reservado para localhost:
+
+127.0.0.1  → el más usado
+127.0.0.2  → también es localhost
+127.0.0.3  → también es localhost
+...hasta 127.255.255.255
+
+http://localhost/      → mismo que 127.0.0.1
+http://127.0.0.1/      → mismo que localhost
 """
 
 from flask import Flask, render_template, request, redirect, url_for, flash
@@ -25,13 +39,16 @@ login_manager.login_message = "Inicia sesión para continuar." # y este es un me
 
 
 class UsuarioSesion(UserMixin):
-""" OJO leer porque esto explica el porque de UserMixin, es un requisieto importante para UsuarioSession pueda ser el puente estre Flask y la BD
-Flask-Login exige:      UserMixin responde:
-¿esta autenticado?      is_authenticated() : Pregunta si inició sesión correctamente:
-¿cuenta activa?         is_active() : UserMixin responde True por defecto — asume que todas las cuentas están activas. (pero si quisieras bloquearlas agregariamos una columna de activo Si o No)
-¿es anónimo?            is_anonymous() : Un usuario anónimo es alguien que no inició sesión — solo está navegando o que ya inicio y no mustra "Inciio sesion" si no "Bienenido Luz Stella"
-¿cuál es su id?         get_id() : el Id de la base y se usa para muchas cosas :)
-"""
+
+    """ 
+    OJO leer porque esto explica el porque de UserMixin, es un requisieto importante para UsuarioSession pueda ser el puente estre Flask y la BD
+    Flask-Login exige:      UserMixin responde:
+    ¿esta autenticado?      is_authenticated() : Pregunta si inició sesión correctamente:
+    ¿cuenta activa?         is_active() : UserMixin responde True por defecto — asume que todas las cuentas están activas. (pero si quisieras bloquearlas agregariamos una columna de activo Si o No)
+    ¿es anónimo?            is_anonymous() : Un usuario anónimo es alguien que no inició sesión — solo está navegando o que ya inicio y no mustra "Inciio sesion" si no "Bienenido Luz Stella"
+    ¿cuál es su id?         get_id() : el Id de la base y se usa para muchas cosas :)
+    """
+
     def __init__(self, datos_usuario: Usuario):#Aqui SQLalchemy le entrega a Flask un usuario y de la clase Usuario que ya sabesmos que hablamos de la misma tabla, usuario es un nombre ejempl, no debe ser el mismo si no quieres
         self.id = datos_usuario.id
         self.nombre = datos_usuario.nombre
@@ -39,9 +56,9 @@ Flask-Login exige:      UserMixin responde:
         self.correo = datos_usuario.correo
         self.rol = datos_usuario.rol
         
-
+#LA DE VALIDACION DEL LOGIN
 #Ojo importante esta porque valida que el usuario sigue en loguin, si hace un movimiento dentro de la app valida que el siga en login y aparte que exista en la base
-@login_manager.user_loader #Esta vaina es un Decorador, para que sirve para meter una funcion a otra funcion. EN este caso vamos a usar la funcion de login_manager para la carga_usuario, y se coloca asi pegadita con un @
+@login_manager.user_loader #Esta vaina es un Decorador, para que sirve para meter una funcion a otra funcion. EN este caso vamos a usar la funcion de cargar_usuario para la c@login_manager.user_loader , y se coloca asi pegadita con un @
 def cargar_usuario(user_id):
     db = SessionLocal()
     usuario = db.get(Usuario, int(user_id)) #esto es esto db.query(Usuario).filter(Usuario.id == user_id).first() solo que como buena practica se usa Get
@@ -49,15 +66,21 @@ def cargar_usuario(user_id):
     return UsuarioSesion(usuario) if usuario else None
 
 
-@app.route("/")
+
+#LA DEL INICIO
+@app.route("/") #este ami / es el http://127.0.0.1:5000 es la pagina de inicio si no quisieras es se puede por ejemplo @app.route("/login")
 def inicio():
-    return redirect(url_for("dashboard") if current_user.is_authenticated else url_for("login"))
+    #Aqui lo que quiere decir es ¿Estas en login? SI: Ve a app-layout NO: Ve a el lgoin 
+    return redirect(url_for("applayout") if current_user.is_authenticated else url_for("login"))
 
-
+"""
+GET  → la página con los input vacíos 
+POST → los input llenos enviados al servidor 
+"""
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("applayout"))
 
     if request.method == "POST":
         # OJO: el formulario manda el campo con name="email" (así está
@@ -72,26 +95,29 @@ def login():
         if verificar_contrasena(correo_escrito, password):
             usuario = buscar_por_correo(correo_escrito)
             login_user(UsuarioSesion(usuario))
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("applayout"))
 
-        flash("Correo o contraseña incorrectos.")
+        flash("Correo o contraseña incorrectos.") #Este si la validacion no funciona
         return redirect(url_for("login"))
-
+    #Y este es el estado del GET
     return render_template("login.html")
 
 
+
+#Cerrar Sesion
 @app.route("/logout")
 @login_required
 def logout():
-    logout_user()
+    logout_user() #Este miguito borra de las cookies el ID y cierra sesion
     return redirect(url_for("login"))
 
-
-@app.route("/dashboard")
+#Es la página principal después del login
+@app.route("/applayout")
 @login_required
-def dashboard():
-    return render_template("dashboard_simple.html", usuario=current_user)
+def applayout():
+    return render_template("app-layout.html", usuario=current_user)
 
 
-if __name__ == "__main__":
+#Esto corre el servicio
+if __name__ == "__main__": # el if valida que  que lo estan corriendo a el y no que estan usando de el
     app.run(debug=True)

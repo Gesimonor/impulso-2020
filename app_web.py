@@ -20,7 +20,7 @@ El rango 127.x.x.x está reservado para localhost:
 http://localhost/      → mismo que 127.0.0.1
 http://127.0.0.1/      → mismo que localhost
 """
-
+from rutas.bp_pacientes import blueprint_pacientes
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import (
     LoginManager, UserMixin, login_user, logout_user,
@@ -31,6 +31,7 @@ from logica_usuario import Usuario, SessionLocal, buscar_por_correo, verificar_c
 
 app = Flask(__name__) # Esta variable le indica a Flask como se llama el archivo y donde buscar los archivos y OJO siempre los html con Flask deben llamarsen templates osea la carpeta porque si no FLask no sabe donde buscar los htmkl
 app.secret_key = "cambia-esto-por-una-clave-secreta-real" # y esto es super iportante, resulta que las Cookies de una web guardan los datos miimos para identificarte como ID, rol y correo por ejemplo, si no esta cifrado un hacker tendria axeceso a eso y no lo queremos
+app.register_blueprint(blueprint_pacientes)
 #ESTO ES CONFIGURACION DE SEGURIDAD QUE VALIDA QUE SIEMPRE SE LOGUEN Y SI NO PUES NO PUEDES ENTRAR A LA APP
 login_manager = LoginManager() #es el gestor de los usuario, Flask por si solo no sabe de usuarios y pide ayuda a LoginManager para hacer como esa duanas en la mpagina web
 login_manager.init_app(app) #este instala a LoginManager dentro de la pagina web    

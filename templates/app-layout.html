@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>App - Panel Principal</title>
 <style>
+  /* ===================================================================
+     RESET GENERAL
+     Quita márgenes y rellenos por defecto de todos los elementos
+     =================================================================== */
   * {
     margin: 0;
     padding: 0;
@@ -12,13 +16,22 @@
     font-family: 'Segoe UI', Arial, sans-serif;
   }
 
+  /* ===================================================================
+     CUERPO PRINCIPAL
+     display:flex hace que sidebar y main queden lado a lado
+     height:100vh ocupa toda la altura de la pantalla
+     =================================================================== */
   body {
     display: flex;
     height: 100vh;
     background-color: #f7f7fb;
   }
 
-  /* Barra lateral */
+  /* ===================================================================
+     BARRA LATERAL (SIDEBAR)
+     La columna izquierda con el menú de navegación
+     width:220px define su ancho fijo
+     =================================================================== */
   .sidebar {
     width: 220px;
     background-color: #ffffff;
@@ -29,6 +42,7 @@
     box-shadow: 2px 0 8px rgba(0,0,0,0.03);
   }
 
+  /* Logo dentro del sidebar */
   .sidebar .logo {
     text-align: center;
     font-weight: 700;
@@ -38,12 +52,14 @@
     padding: 0 20px;
   }
 
+  /* Contenedor de los enlaces del menú */
   .sidebar nav {
     display: flex;
     flex-direction: column;
     flex: 1;
   }
 
+  /* Estilo base de cada enlace del menú */
   .sidebar a {
     text-decoration: none;
     color: #555;
@@ -56,11 +72,13 @@
     transition: all 0.2s ease;
   }
 
+  /* Efecto hover — cuando el mouse pasa encima */
   .sidebar a:hover {
     background-color: #fff3e6;
     color: #e8590c;
   }
 
+  /* Enlace activo — la sección donde estás ahora */
   .sidebar a.active {
     background: linear-gradient(90deg, #fff3e6, #ffffff);
     color: #e8590c;
@@ -68,13 +86,15 @@
     font-weight: 600;
   }
 
+  /* Contenedor del ícono de cada enlace */
   .sidebar .icon {
     width: 20px;
     text-align: center;
   }
 
+  /* Botón de salir — siempre al fondo del sidebar */
   .sidebar .salir {
-    margin-top: auto;
+    margin-top: auto;  /* empuja el botón hasta el fondo */
     color: #d9480f;
     border-top: 1px solid #eee;
     padding-top: 16px;
@@ -84,7 +104,11 @@
     background-color: #ffe3e3;
   }
 
-  /* Contenido principal */
+  /* ===================================================================
+     CONTENIDO PRINCIPAL (MAIN)
+     La columna derecha — ocupa todo el espacio restante
+     flex:1 hace que tome todo el ancho que no usa el sidebar
+     =================================================================== */
   .main {
     flex: 1;
     display: flex;
@@ -92,6 +116,10 @@
     overflow: hidden;
   }
 
+  /* ===================================================================
+     ENCABEZADO (HEADER)
+     La barra de bienvenida con gradiente de colores
+     =================================================================== */
   header {
     background: linear-gradient(120deg, #ff9a56, #ff6f91, #ffb648);
     color: white;
@@ -99,23 +127,23 @@
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   }
 
-  header h1 {
-    font-size: 24px;
-    font-weight: 700;
-  }
+  header h1 { font-size: 24px; font-weight: 700; }
+  header p  { font-size: 14px; opacity: 0.9; margin-top: 4px; }
 
-  header p {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-top: 4px;
-  }
-
+  /* ===================================================================
+     ZONA DE CONTENIDO
+     El área scrolleable donde van las tarjetas de cada sección
+     =================================================================== */
   .content {
     flex: 1;
     padding: 32px;
-    overflow-y: auto;
+    overflow-y: auto;  /* scroll vertical si el contenido es largo */
   }
 
+  /* ===================================================================
+     TARJETA (CARD)
+     Contenedor blanco con sombra para mostrar información
+     =================================================================== */
   .card {
     background: white;
     border-radius: 12px;
@@ -124,37 +152,53 @@
     color: #444;
   }
 
-  .card h2 {
-    color: #d9480f;
-    margin-bottom: 10px;
-  }
+  .card h2 { color: #d9480f; margin-bottom: 10px; }
 </style>
 </head>
 <body>
 
+  <!-- ================================================================
+       SIDEBAR — barra lateral izquierda con navegación
+       ================================================================ -->
   <aside class="sidebar">
+
+    <!-- Nombre/logo de la app -->
     <div class="logo">Mi App</div>
+
+    <!-- Enlaces de navegación -->
     <nav>
       <a href="#" class="active"><span class="icon">🏠</span> Inicio</a>
       <a href="#"><span class="icon">🧾</span> Facturas</a>
       <a href="#"><span class="icon">🧑‍🤝‍🧑</span> Pacientes</a>
       <a href="#"><span class="icon">💊</span> Fórmulas</a>
       <a href="#"><span class="icon">📅</span> Citas</a>
-      <a href="#" class="salir"><span class="icon">🚪</span> Salir</a>
+      <a href="{{ url_for('logout') }}" class="salir"><span class="icon">🚪</span> Salir <!-- Botón salir — llama la función logout de Flask -->
+      </a>
     </nav>
+
   </aside>
 
+  <!-- ================================================================
+       MAIN — contenido principal lado derecho
+       ================================================================ -->
   <div class="main">
+
+    <!-- Encabezado con bienvenida -->
     <header>
       <h1>Panel Principal</h1>
-      <p>Bienvenida de nuevo</p>
+      <p>Bienvenida de nuevo, {{ usuario.nombre }} {{ usuario.apellido }}</p>
     </header>
 
+    <!-- Zona de contenido scrolleable -->
     <div class="content">
+
+      <!-- Tarjeta de ejemplo — aquí irá el contenido de cada sección -->
       <div class="card">
         <h2>Inicio</h2>
-        <p>Aquí puedes colocar el contenido correspondiente a cada sección seleccionada en el menú lateral.</p>
+        <p>Aquí puedes colocar el contenido correspondiente a cada 
+           sección seleccionada en el menú lateral.</p>
       </div>
+
     </div>
   </div>
 

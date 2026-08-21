@@ -39,7 +39,6 @@ login_manager.login_message = "Inicia sesión para continuar." # y este es un me
 
 
 class UsuarioSesion(UserMixin):
-
     """ 
     OJO leer porque esto explica el porque de UserMixin, es un requisieto importante para UsuarioSession pueda ser el puente estre Flask y la BD
     Flask-Login exige:      UserMixin responde:
@@ -48,7 +47,6 @@ class UsuarioSesion(UserMixin):
     ¿es anónimo?            is_anonymous() : Un usuario anónimo es alguien que no inició sesión — solo está navegando o que ya inicio y no mustra "Inciio sesion" si no "Bienenido Luz Stella"
     ¿cuál es su id?         get_id() : el Id de la base y se usa para muchas cosas :)
     """
-
     def __init__(self, datos_usuario: Usuario):#Aqui SQLalchemy le entrega a Flask un usuario y de la clase Usuario que ya sabesmos que hablamos de la misma tabla, usuario es un nombre ejempl, no debe ser el mismo si no quieres
         self.id = datos_usuario.id
         self.nombre = datos_usuario.nombre

@@ -50,6 +50,17 @@ class Usuario(Base): #Las clases son moldes y estos moldes dan objetos como los 
     def __repr__(self):  #Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
         return f"<Usuario {self.nombre} {self.apellido} ({self.rol})>" #el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
 
+class Paciente(Base):
+    __tablename__ = "pacientes"
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(100), nullable=False)
+    apellido = Column(String(100), nullable=False)
+    celular = Column(String(20),nullabel=False)
+    correo = Column(String(50),nullabel=False)
+    fecha_nacimiento = Column(DateTime, nullabel=False)
+    direccion = Column(String(200), nullabel=False)
+
 
 
 # Crea la tabla si no existe. Si ya existe (como en tu caso), no hace nada.
@@ -84,69 +95,3 @@ def crear_usuario(nombre, apellido, rol, correo, contrasena_texto_plano):
     db.refresh(nuevo_usuario)  # trae el id ya asignado antes de cerrar
     db.close()
     return nuevo_usuario
-
-
-def listar_usuarios():
-    db = SessionLocal()
-    todos = db.query(Usuario).all() #Ojo aqui se trae Usuario ls clase per porwue estamos trabajando SQL ORM que es a base de objetos y la tabla usuarios es un objeto llamado Usuario
-    db.close()
-    return todos
-
-
-def buscar_por_correo(correo):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO al filtro toca parametrizarle la condicion y para indicar una columna la debes traer llamando la clase y Fisrt() aunque su principal funcion es tarer el primero tambien es la maners en la que entrega el resuktado , da un objeto y no una lista porque te ahorrar la desenpaquetada
-    db.close()
-    return usuario
-
-
-def verificar_contrasena(correo, contrasena_escrita):
-    usuario = buscar_por_correo(correo) #Aqui valida usando la funcion de arriba para validar que ese correo exista y te devuelve el corrreo de la base 
-    if usuario is None: #SI el corrreo no existe usuario seria none y segun el if si la respueta en none pues no hagas nada
-        return False
-    return check_password_hash(usuario.contrasena_hash, contrasena_escrita) #pero si si pues valida la contraseña y esto devuelve un boolenao True o False 
-
-
-def actualizar_usuario(correo, nuevo_nombre=None, nuevo_apellido=None, nuevo_rol=None):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO esto es todo el usuario
-    if usuario is None:
-        db.close()
-        return None
-
-    if nuevo_nombre: #nuevo_nombre si no trae dato es None porqeu asi esta actulizar_usuario, si el IF ribe None pues es False y no se ejecuta el IF sencillo
-        usuario.nombre = nuevo_nombre
-    if nuevo_apellido:
-        usuario.apellido = nuevo_apellido
-    if nuevo_rol:
-        usuario.rol = nuevo_rol
-
-    db.commit()
-    db.close()
-    return usuario
-
-
-def cambiar_contrasena(correo, nueva_contrasena_texto_plano):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
-    if usuario is None:
-        db.close()
-        return False
-
-    usuario.contrasena_hash = generate_password_hash(nueva_contrasena_texto_plano)#OJO esto es todo el usuario
-    db.commit()
-    db.close()
-    return True
-
-
-def eliminar_usuario(correo):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
-    if usuario is None:
-        db.close()
-        return False
-
-    db.delete(usuario) #eliina el filtro
-    db.commit()
-    db.close()
-    return True

@@ -1,10 +1,10 @@
 """
-logica_usuario.py
+logica_paciente.py
 
-Todo lo relacionado con usuarios, en un solo lugar:
+Todo lo relacionado con pacientes, en un solo lugar:
   - Conexión a la base de datos
-  - El modelo Usuario (el "traductor" entre Python y usuarios.db)
-  - Las funciones para crear, consultar, modificar y eliminar usuarios
+  - El modelo Paciente (el "traductor" entre Python y pacientes.db)
+  - Las funciones para crear, consultar, modificar y eliminar pacientes
 
 Tanto el notebook como la app de Flask importan de aquí, para no repetir
 la misma lógica en dos lugares distintos.
@@ -14,7 +14,6 @@ from datetime import datetime
 from pathlib import Path
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # ===========================================================================
@@ -27,7 +26,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # este archivo — ya no depende de la carpeta desde donde arranques la
 # terminal (que era justo la causa del problema que tenías).
 CARPETA_PROYECTO = Path(__file__).parent
-RUTA_BASE_DATOS = CARPETA_PROYECTO / "usuarios.db"
+RUTA_BASE_DATOS = CARPETA_PROYECTO / "base-opticaprueba.db"
 
 engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
 
@@ -35,34 +34,20 @@ engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
 class Base(DeclarativeBase):
     pass
 
-
-class Usuario(Base): #Las clases son moldes y estos moldes dan objetos como los moldes de las galletas 
-    __tablename__ = "usuarios" #la variable __tablename__ lo que hace es que le indica a usuarios que es una tabla, y que los datos que le va a entregar a delante son los nombres de las columnas
-
-    id = Column(Integer, primary_key=True)
-    nombre = Column(String(100), nullable=False)
-    apellido = Column(String(100), nullable=False)
-    rol = Column(String(50), nullable=False)
-    correo = Column(String(150), nullable=False, unique=True)
-    contrasena_hash = Column(String(255), nullable=False)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow)
-
-    def __repr__(self):  #Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
-        return f"<Usuario {self.nombre} {self.apellido} ({self.rol})>" #el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
-
-class Paciente(Base):
-    __tablename__ = "pacientes"
+class Paciente(Base):#Las clases son moldes y estos moldes dan objetos como los moldes de las galletas 
+    __tablename__ = "pacientes" #la variable __tablename__ lo que hace es que le indica a usuarios que es una tabla, y que los datos que le va a entregar a delante son los nombres de las columnas
 
     id = Column(Integer, primary_key=True)
     nombre = Column(String(100), nullable=False)
     apellido = Column(String(100), nullable=False)
-    celular = Column(String(20),nullabel=False)
-    correo = Column(String(50),nullabel=False)
-    fecha_nacimiento = Column(DateTime, nullabel=False)
-    direccion = Column(String(200), nullabel=False)
+    celular = Column(String(20),nullable=False)
+    correo = Column(String(50),nullable=False)
+    fecha_nacimiento = Column(DateTime, nullable=False)
+    direccion = Column(String(200), nullable=False)
 
-
-
+    def __repr__(self):#Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
+        return f"<Paciente {self.nombre} {self.apellido} ({self.correo})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
+    
 # Crea la tabla si no existe. Si ya existe (como en tu caso), no hace nada.
 Base.metadata.create_all(engine)
 
@@ -81,17 +66,18 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 # use estas funciones (el notebook, o una ruta de Flask) no tiene que
 # preocuparse de manejar la sesión manualmente cada vez.
 
-def crear_usuario(nombre, apellido, rol, correo, contrasena_texto_plano):
+def crear_paciente(nombre, apellido, celular, correo, fecha_nacimiento, direccion):
     db = SessionLocal()
-    nuevo_usuario = Usuario(
-        nombre=nombre, #el pirmero nombre es el nombre de la base y el segundo es el nombre que trae por ejem "Luz Stella"
+    nuevo_paciente = Paciente(
+        nombre=nombre,
         apellido=apellido,
-        rol=rol,
+        celular=celular,
         correo=correo,
-        contrasena_hash=generate_password_hash(contrasena_texto_plano),
-    )
-    db.add(nuevo_usuario)
+        fecha_nacimiento=fecha_nacimiento,
+        direccion=direccion
+    )   
+    db.add(nuevo_paciente)
     db.commit()
-    db.refresh(nuevo_usuario)  # trae el id ya asignado antes de cerrar
+    db.refresh(nuevo_paciente)  # trae el id ya asignado antes de cerrar
     db.close()
-    return nuevo_usuario
+    return nuevo_paciente

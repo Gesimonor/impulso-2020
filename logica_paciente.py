@@ -8,6 +8,11 @@ Todo lo relacionado con pacientes, en un solo lugar:
 
 Tanto el notebook como la app de Flask importan de aquí, para no repetir
 la misma lógica en dos lugares distintos.
+
+logica_paciente.py  → sabe de BASE DE DATOS
+                      "crea un paciente en la BD"
+                      "busca un paciente"
+                      "elimina un paciente"
 """
 
 from datetime import datetime
@@ -38,12 +43,14 @@ class Paciente(Base):#Las clases son moldes y estos moldes dan objetos como los 
     __tablename__ = "pacientes" #la variable __tablename__ lo que hace es que le indica a usuarios que es una tabla, y que los datos que le va a entregar a delante son los nombres de las columnas
 
     id = Column(Integer, primary_key=True)
+    documento = Column(String(100),nullable=False, unique=True)
     nombre = Column(String(100), nullable=False)
     apellido = Column(String(100), nullable=False)
     celular = Column(String(20),nullable=False)
     correo = Column(String(50),nullable=False)
     fecha_nacimiento = Column(DateTime, nullable=False)
     direccion = Column(String(200), nullable=False)
+    fecha_creacion = Column(DateTime, default=datetime.utcnow)
 
     def __repr__(self):#Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
         return f"<Paciente {self.nombre} {self.apellido} ({self.correo})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
@@ -81,3 +88,57 @@ def crear_paciente(nombre, apellido, celular, correo, fecha_nacimiento, direccio
     db.refresh(nuevo_paciente)  # trae el id ya asignado antes de cerrar
     db.close()
     return nuevo_paciente
+
+def consultar_paciente(documento = None,nombre = None):
+    db = SessionLocal()
+    if documento == None and nombre == None:
+        db.close()
+        return None #este es el caso en que no se encuentra el paciente por documento y nombre
+    elif documento:
+        paciente_pordocumento = db.query(Paciente).filter(Paciente.documento == documento).first()  
+        db.close()
+        return paciente_pordocumento
+    elif nombre:
+        paciente_pornombre = db.query(Paciente).filter(Paciente.nombre == nombre).all()
+        db.close()
+        return paciente_pornombre
+
+
+
+
+def editar_paciente(id,nombre, apellido, documento, c   elular, correo, fecha_nacimiento, direccion):
+    db = SessionLocal()
+    paciente_modificar = db.query(Paciente).filter(Paciente.id == id).first()
+    paciente_modificar.nombre = nombre
+    paciente_modificar.apellido = apellido 
+    paciente_modificar.documento = documento
+    paciente_modificar.celular = celular
+    paciente_modificar.correo = correo
+    paciente_modificar.fecha_nacimiento = fecha_nacimiento
+    paciente_modificar.direccion = direccion
+    db.commit()
+    db.refresh(paciente_modificar)
+    db.close()
+    return paciente_modificar   
+
+
+def eliminar_paciente(id):
+    db = SessionLocal()
+    paciente_eliminar = db.query(Paciente).filter(Paciente.id == id).first()
+    db.delete(paciente_eliminar)
+    db.commit()
+    db.close()
+    return True
+
+def listar_pacientes():
+    db = SessionLocal()
+    ultimos_20pacientes = db.query(Paciente).order_by(Paciente.fecha_creacion). limit(20).all()
+    db.close()
+    return ultimoss_20pacientes
+
+
+
+
+
+
+

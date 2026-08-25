@@ -106,7 +106,7 @@ def consultar_paciente(documento = None,nombre = None):
 
 
 
-def editar_paciente(id,nombre, apellido, documento, c   elular, correo, fecha_nacimiento, direccion):
+def editar_paciente(id,nombre, apellido, documento, celular, correo, fecha_nacimiento, direccion):
     db = SessionLocal()
     paciente_modificar = db.query(Paciente).filter(Paciente.id == id).first()
     paciente_modificar.nombre = nombre

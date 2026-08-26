@@ -78,7 +78,7 @@ def crear_usuario(nombre, rol, correo, contrasena_texto_plano):
     db.close()
     return nuevo_usuario
 
-crear_usuario("Luz Stella", "admin", "luz@email.com", "123456") #esta funcion es para crear un usuario inicial para poder entrar a la app y no tener que crear un usuario desde la base de datos  
+#crear_usuario("Luz Stella", "admin", "luz@email.com", "123456") #esta funcion es para crear un usuario inicial para poder entrar a la app y no tener que crear un usuario desde la base de datos  
 
 def listar_usuarios():
     db = SessionLocal()

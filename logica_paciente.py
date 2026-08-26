@@ -73,9 +73,10 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 # use estas funciones (el notebook, o una ruta de Flask) no tiene que
 # preocuparse de manejar la sesión manualmente cada vez.
 
-def crear_paciente(nombre, apellido, celular, correo, fecha_nacimiento, direccion):
+def crear_paciente(documento, nombre, apellido, celular, correo, fecha_nacimiento, direccion):
     db = SessionLocal()
     nuevo_paciente = Paciente(
+        documento=documento,
         nombre=nombre,
         apellido=apellido,
         celular=celular,
@@ -88,6 +89,9 @@ def crear_paciente(nombre, apellido, celular, correo, fecha_nacimiento, direccio
     db.refresh(nuevo_paciente)  # trae el id ya asignado antes de cerrar
     db.close()
     return nuevo_paciente
+
+#crear_paciente("123456789", "Juan", "Pérez", "3001234567", "juan@email.com", "1990-01-01", "Calle 123")
+#crear_paciente("987654321", "María", "Gómez", "3007654321", "maria@email.com", "1985-05-15", "Calle 456")
 
 def consultar_paciente(documento = None,nombre = None):
     db = SessionLocal()

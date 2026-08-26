@@ -52,9 +52,9 @@ def editar_paciente_route(id):
     if request.method == "POST":
         editar_paciente(
             id=id,
+            documento=request.form.get("documento"),
             nombre=request.form.get("nombre"),
             apellido=request.form.get("apellido"),
-            documento=request.form.get("documento"),
             celular=request.form.get("celular"),
             correo=request.form.get("correo"),
             fecha_nacimiento=request.form.get("fecha_nacimiento"),

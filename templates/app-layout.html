@@ -169,7 +169,9 @@
     <nav>
       <a href="#" class="active"><span class="icon">🏠</span> Inicio</a>
       <a href="#"><span class="icon">🧾</span> Facturas</a>
-      <a href="#"><span class="icon">🧑‍🤝‍🧑</span> Pacientes</a>
+      <a href="{{ url_for('bluep_pacientes.pacientes') }}">
+        <span class="icon">🧑‍🤝‍🧑</span> Pacientes
+      </a>
       <a href="#"><span class="icon">💊</span> Fórmulas</a>
       <a href="#"><span class="icon">📅</span> Citas</a>
       <a href="{{ url_for('logout') }}" class="salir"><span class="icon">🚪</span> Salir <!-- Botón salir — llama la función logout de Flask -->

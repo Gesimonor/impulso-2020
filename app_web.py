@@ -37,6 +37,7 @@ app.secret_key = "cambia-esto-por-una-clave-secreta-real" # y esto es super ipor
 app.register_blueprint(blueprint_pacientes)#Esta es la que trae el blueprint de pacientes
 
 #ESTO ES CONFIGURACION DE SEGURIDAD QUE VALIDA QUE SIEMPRE SE LOGUEN Y SI NO PUES NO PUEDES ENTRAR A LA APP
+
 login_manager = LoginManager() #es el gestor de los usuario, Flask por si solo no sabe de usuarios y pide ayuda a LoginManager para hacer como esa duanas en la mpagina web
 login_manager.init_app(app) #este instala a LoginManager dentro de la pagina web    
 login_manager.login_view = "login" #esta es super importante, si alguien intenta entrar sin estar logeado esta linia dice que automaticamente valla a login.html
@@ -55,7 +56,6 @@ class UsuarioSesion(UserMixin):
     def __init__(self, datos_usuario: Usuario):#Aqui SQLalchemy le entrega a Flask un usuario y de la clase Usuario que ya sabesmos que hablamos de la misma tabla, usuario es un nombre ejempl, no debe ser el mismo si no quieres
         self.id = datos_usuario.id
         self.nombre = datos_usuario.nombre
-        self.apellido = datos_usuario.apellido
         self.correo = datos_usuario.correo
         self.rol = datos_usuario.rol
         

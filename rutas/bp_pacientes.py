@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from logica_paciente import crear_paciente
+from logica_paciente import crear_paciente, listar_pacientes, consultar_paciente, editar_paciente, eliminar_paciente
 
 blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es un blueprint y que se llama pacientes, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de pacientes
 
@@ -18,6 +18,7 @@ def pacientes():
     """
     if request.method == "POST":
         crear_paciente(
+            documento=request.form.get("documento"),
             nombre=request.form.get("nombre"),
             apellido=request.form.get("apellido"),
             celular=request.form.get("celular"),
@@ -25,7 +26,7 @@ def pacientes():
             fecha_nacimiento=request.form.get("fecha_nacimiento"),
             direccion=request.form.get("direccion")
         )
-        flash("Paciente creado exitosamente ✅") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
+        flash("Paciente creado exitosamente") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
         return redirect(url_for("bluep_pacientes.pacientes")) #1 va en blueprint_pacientes porque es el nombre del blueprint y 2 va en pacientes porque es el nombre de la funcion que tenemos arriba
     """Sin redirect:
         Usuario llena formulario → POST → paciente creado
@@ -37,8 +38,35 @@ def pacientes():
         Usuario llena formulario → POST → paciente creado
         → redirect a /pacientes → GET limpio
         Usuario presiona F5
-        → solo recarga la página, no reenvía el formulario ✅
+        → solo recarga la página, no reenvía el formulario 
     """
 
+    pacientes = listar_pacientes()
+    return render_template("pacientes.html", usuario=current_user, pacientes=pacientes)
 
-    return render_template("pacientes.html", usuario=current_user)
+
+@blueprint_pacientes.route("/pacientes/editar/<int:id>", methods=["GET", "POST"])
+@login_required 
+def editar_paciente_route(id):
+    paciente = consultar_paciente(documento=id)
+    if request.method == "POST":
+        editar_paciente(
+            id=id,
+            nombre=request.form.get("nombre"),
+            apellido=request.form.get("apellido"),
+            documento=request.form.get("documento"),
+            celular=request.form.get("celular"),
+            correo=request.form.get("correo"),
+            fecha_nacimiento=request.form.get("fecha_nacimiento"),
+            direccion=request.form.get("direccion")
+        )
+        flash("Paciente editado exitosamente")
+        return redirect(url_for("bluep_pacientes.pacientes"))
+    return render_template("editar_paciente.html", usuario=current_user, paciente=paciente)
+
+@blueprint_pacientes.route("/pacientes/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar_paciente_route(id):
+    eliminar_paciente(id)
+    flash("Paciente eliminado exitosamente")
+    return redirect(url_for("bluep_pacientes.pacientes"))

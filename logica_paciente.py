@@ -134,7 +134,7 @@ def listar_pacientes():
     db = SessionLocal()
     ultimos_20pacientes = db.query(Paciente).order_by(Paciente.fecha_creacion). limit(20).all()
     db.close()
-    return ultimoss_20pacientes
+    return ultimos_20pacientes
 
 
 

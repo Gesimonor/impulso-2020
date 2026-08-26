@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editar Paciente</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+
+  body {
+    display: flex;
+    height: 100vh;
+    background-color: #f7f7fb;
+  }
+
+  /* ── SIDEBAR igual que pacientes.html ── */
+  .sidebar {
+    width: 220px; background: #fff;
+    border-right: 1px solid #e8e8f0;
+    display: flex; flex-direction: column;
+    padding: 20px 0;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.03);
+  }
+  .sidebar .logo { text-align:center; font-weight:700; font-size:20px; color:#e8590c; margin-bottom:30px; padding:0 20px; }
+  .sidebar nav { display:flex; flex-direction:column; flex:1; }
+  .sidebar a { text-decoration:none; color:#555; padding:14px 24px; font-size:15px; display:flex; align-items:center; gap:12px; border-left:4px solid transparent; transition:all 0.2s; }
+  .sidebar a:hover { background:#fff3e6; color:#e8590c; }
+  .sidebar a.active { background:linear-gradient(90deg,#fff3e6,#fff); color:#e8590c; border-left:4px solid #f76707; font-weight:600; }
+  .sidebar .icon { width:20px; text-align:center; }
+  .sidebar .salir { margin-top:auto; color:#d9480f; border-top:1px solid #eee; padding-top:16px; }
+  .sidebar .salir:hover { background:#ffe3e3; }
+
+  /* ── MAIN ── */
+  .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(120deg, #ff9a56, #ff6f91, #ffb648);
+    color: white; padding: 24px 32px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  }
+  header h1 { font-size:24px; font-weight:700; }
+  header p  { font-size:14px; opacity:0.9; margin-top:4px; }
+
+  /* ── CONTENT ── */
+  .content { flex:1; padding:32px; overflow-y:auto; }
+
+  /* ── TARJETA DEL FORMULARIO ── */
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    max-width: 600px;  /* ← limita el ancho para que no sea tan ancho */
+  }
+
+  .card h2 { color:#d9480f; margin-bottom:24px; font-size:20px; }
+
+  /* ── INPUTS ── */
+  .input-group { margin-bottom: 16px; }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;  /* ← esquinas redondeadas */
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .input-group input:focus { border-color: #e8590c; }
+
+  /* ── BOTONES ── */
+  .botones {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  .btn-cancelar {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    color: #555;
+  }
+
+  .btn-guardar {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: #e8590c;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .btn-guardar:hover { background: #c94d0a; }
+</style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">Mi App</div>
+    <nav>
+      <a href="{{ url_for('applayout') }}"><span class="icon">🏠</span> Inicio</a>
+      <a href="#"><span class="icon">🧾</span> Facturas</a>
+
+      <!-- Pacientes activo porque venimos de ahí -->
+      <a href="{{ url_for('bluep_pacientes.pacientes') }}" class="active">
+        <span class="icon">🧑‍🤝‍🧑</span> Pacientes
+      </a>
+
+      <a href="#"><span class="icon">💊</span> Fórmulas</a>
+      <a href="#"><span class="icon">📅</span> Citas</a>
+      <a href="{{ url_for('logout') }}" class="salir">
+        <span class="icon">🚪</span> Salir
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <header>
+      <h1>Editar Paciente</h1>
+      <p>Bienvenida, {{ usuario.nombre }} {{ usuario.apellido }}</p>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <h2>Datos del Paciente</h2>
+
+        <!-- ============================================================
+             FORMULARIO POST — envía a editar_paciente_route con el id
+             El id va en la URL para que Flask sepa cuál editar
+             ============================================================ -->
+        <form method="POST"
+              action="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}">
+
+          <!-- value="{{ paciente.campo }}" ← rellena el campo con el dato actual -->
+
+          <div class="input-group">
+            <label>Nombre</label>
+            <input type="text" name="nombre" value="{{ paciente.nombre }}" required>
+          </div>
+
+          <div class="input-group">
+            <label>Apellido</label>
+            <input type="text" name="apellido" value="{{ paciente.apellido }}" required>
+          </div>
+
+          <div class="input-group">
+            <label>Documento</label>
+            <input type="text" name="documento" value="{{ paciente.documento }}" required>
+          </div>
+
+          <div class="input-group">
+            <label>Celular</label>
+            <input type="text" name="celular" value="{{ paciente.celular }}" required>
+          </div>
+
+          <div class="input-group">
+            <label>Correo</label>
+            <input type="email" name="correo" value="{{ paciente.correo }}" required>
+          </div>
+
+          <div class="input-group">
+            <label>Fecha de Nacimiento</label>
+            <!-- strftime convierte datetime a texto en formato que entiende el input date -->
+            <input type="date" name="fecha_nacimiento"
+                   value="{{ paciente.fecha_nacimiento.strftime('%Y-%m-%d') if paciente.fecha_nacimiento else '' }}"
+                   required>
+          </div>
+
+          <div class="input-group">
+            <label>Dirección</label>
+            <input type="text" name="direccion" value="{{ paciente.direccion }}" required>
+          </div>
+
+          <!-- Botones — Cancelar vuelve a la lista, Guardar envía el formulario -->
+          <div class="botones">
+            <a href="{{ url_for('bluep_pacientes.pacientes') }}" class="btn-cancelar">
+              Cancelar
+            </a>
+            <button type="submit" class="btn-guardar">Guardar cambios</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

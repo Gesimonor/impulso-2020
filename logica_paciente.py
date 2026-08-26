@@ -74,6 +74,7 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 # preocuparse de manejar la sesión manualmente cada vez.
 
 def crear_paciente(documento, nombre, apellido, celular, correo, fecha_nacimiento, direccion):
+    #Pendinete validar que el documento no exista ya en la base de datos, para no crear duplicados
     db = SessionLocal()
     nuevo_paciente = Paciente(
         documento=documento,
@@ -108,7 +109,11 @@ def consultar_paciente(documento = None,nombre = None):
         return paciente_pornombre
 
 
-
+def buscar_por_id_editar(id):
+    db = SessionLocal()
+    paciente_porid = db.query(Paciente).filter(Paciente.id == id).first()
+    db.close()
+    return paciente_porid
 
 def editar_paciente(id,nombre, apellido, documento, celular, correo, fecha_nacimiento, direccion):
     db = SessionLocal()

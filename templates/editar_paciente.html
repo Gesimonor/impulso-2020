@@ -121,11 +121,11 @@
       <a href="#"><span class="icon">🧾</span> Facturas</a>
 
       <!-- Pacientes activo porque venimos de ahí -->
-      <a href="{{ url_for('bluep_pacientes.pacientes') }}" class="active">
+      <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}" class="active">
         <span class="icon">🧑‍🤝‍🧑</span> Pacientes
       </a>
 
-      <a href="#"><span class="icon">💊</span> Fórmulas</a>
+      <a href="{{ url_for('bluep_formulas.crear_formula_route') }}"><span class="icon">💊</span> Fórmulas</a>
       <a href="#"><span class="icon">📅</span> Citas</a>
       <a href="{{ url_for('logout') }}" class="salir">
         <span class="icon">🚪</span> Salir
@@ -194,7 +194,7 @@
 
           <!-- Botones — Cancelar vuelve a la lista, Guardar envía el formulario -->
           <div class="botones">
-            <a href="{{ url_for('bluep_pacientes.pacientes') }}" class="btn-cancelar">
+            <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}" class="btn-cancelar">
               Cancelar
             </a>
             <button type="submit" class="btn-guardar">Guardar cambios</button>

@@ -21,6 +21,7 @@ http://localhost/      → mismo que 127.0.0.1
 http://127.0.0.1/      → mismo que localhost
 """
 from rutas.bp_pacientes import blueprint_pacientes    #Esto trae he ,importa y trae la carpeta de ruta
+from rutas.bp_formulas import blueprint_formulas    #Esto trae he ,importa y trae la carpeta de ruta
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import (
     LoginManager, UserMixin, login_user, logout_user,
@@ -33,8 +34,10 @@ app = Flask(__name__) # Esta variable le indica a Flask como se llama el archivo
 app.secret_key = "cambia-esto-por-una-clave-secreta-real" # y esto es super iportante, resulta que las Cookies de una web guardan los datos miimos para identificarte como ID, rol y correo por ejemplo, si no esta cifrado un hacker tendria axeceso a eso y no lo queremos
 
 
-#Pacientes Blueprint
+# Blueprint
 app.register_blueprint(blueprint_pacientes)#Esta es la que trae el blueprint de pacientes
+app.register_blueprint(blueprint_formulas) #Esta es la que trae el blueprint de formulas
+
 
 #ESTO ES CONFIGURACION DE SEGURIDAD QUE VALIDA QUE SIEMPRE SE LOGUEN Y SI NO PUES NO PUEDES ENTRAR A LA APP
 

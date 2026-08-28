@@ -265,11 +265,11 @@
       <a href="#"><span class="icon">🧾</span> Facturas</a>
 
       <!-- Pacientes marcado como activo porque estamos en esta sección -->
-      <a href="{{ url_for('bluep_pacientes.pacientes') }}" class="active">
+      <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}" class="active">
         <span class="icon">🧑‍🤝‍🧑</span> Pacientes
       </a> 
 
-      <a href="#"><span class="icon">💊</span> Fórmulas</a>
+      <a href="{{ url_for('bluep_formulas.crear_formula_route') }}"><span class="icon">💊</span> Fórmulas</a>
       <a href="#"><span class="icon">📅</span> Citas</a>
       <a href="{{ url_for('logout') }}" class="salir">
         <span class="icon">🚪</span> Salir
@@ -404,7 +404,7 @@
       <h3 style="color:#d9480f; margin-bottom:20px;">Agregar Paciente</h3>
 
       <!-- Formulario POST que envía datos a bp_pacientes -->
-      <form method="POST" action="{{ url_for('bluep_pacientes.pacientes') }}">
+      <form method="POST" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}">
 
         <!-- Campo Nombre -->
         <div style="margin-bottom:14px;">

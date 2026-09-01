@@ -8,7 +8,7 @@ blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es 
 @blueprint_pacientes.route("/pacientes", methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
 @login_required
 #request es un objeto de Flask que contiene toda la información de la petición que llegó
-def pacientes():
+def crear_paciente_route():
     """ 
     Request es un objeto de Flask que contiene toda la información de la petición que llegó.
         request.method      → "GET" o "POST"

@@ -1,68 +1,33 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fórmulas</title>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+<!-- ================================================================
+     HERENCIA — usa base.html como plantilla madre
+     sidebar, header y flash vienen automáticamente
+     ================================================================ -->
+{% extends "base.html" %}
 
-  body { display:flex; height:100vh; background-color:#f7f7fb; }
 
-  /* SIDEBAR */
-  .sidebar {
-    width:220px; background:#fff;
-    border-right:1px solid #e8e8f0;
-    display:flex; flex-direction:column;
-    padding:20px 0;
-    box-shadow:2px 0 8px rgba(0,0,0,0.03);
-  }
-  .sidebar .logo { text-align:center; font-weight:700; font-size:20px; color:#e8590c; margin-bottom:30px; padding:0 20px; }
-  .sidebar nav { display:flex; flex-direction:column; flex:1; }
-  .sidebar a { text-decoration:none; color:#555; padding:14px 24px; font-size:15px; display:flex; align-items:center; gap:12px; border-left:4px solid transparent; transition:all 0.2s; }
-  .sidebar a:hover { background:#fff3e6; color:#e8590c; }
-  .sidebar a.active { background:linear-gradient(90deg,#fff3e6,#fff); color:#e8590c; border-left:4px solid #f76707; font-weight:600; }
-  .sidebar .icon { width:20px; text-align:center; }
-  .sidebar .salir { margin-top:auto; color:#d9480f; border-top:1px solid #eee; padding-top:16px; }
-  .sidebar .salir:hover { background:#ffe3e3; }
+<!-- HUECO 1 — título de la pestaña -->
+{% block titulo %}Fórmulas{% endblock %}
 
-  /* MAIN */
-  .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
 
-  /* HEADER */
-  header { background:linear-gradient(120deg,#ff9a56,#ff6f91,#ffb648); color:white; padding:24px 32px; box-shadow:0 3px 10px rgba(0,0,0,0.08); }
-  header h1 { font-size:24px; font-weight:700; }
-  header p { font-size:14px; opacity:0.9; margin-top:4px; }
+<!-- HUECO 2 — título del header naranja -->
+{% block titulo_pagina %}Fórmulas{% endblock %}
 
-  /* CONTENT */
-  .content { flex:1; padding:32px; overflow-y:auto; }
+
+<!-- HUECO 3 — CSS específico de fórmulas -->
+{% block estilos %}
 
   /* BARRA DE ACCIONES */
-  .barra-acciones {
-    display:flex; justify-content:space-between;
-    align-items:center; margin-bottom:24px;
-  }
+  .barra-acciones { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
   .barra-acciones h2 { color:#d9480f; font-size:20px; }
 
   /* BOTÓN AGREGAR */
-  .btn-agregar {
-    background-color:#e8590c; color:white;
-    border:none; padding:10px 20px;
-    border-radius:10px; font-size:14px;
-    font-weight:600; cursor:pointer;
-    text-decoration:none; transition:background 0.2s;
-  }
-  .btn-agregar:hover { background-color:#c94d0a; }
+  .btn-agregar { background:#e8590c; color:white; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:background 0.2s; }
+  .btn-agregar:hover { background:#c94d0a; }
 
-  /* FLASH */
-  .flash-mensaje {
-    background-color:#d4edda; color:#155724;
-    padding:12px 16px; border-radius:8px;
-    margin-bottom:16px; font-size:14px;
-  }
+  /* TARJETA */
+  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 
   /* TABLA */
-  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
   .tabla { width:100%; border-collapse:collapse; font-size:14px; }
   .tabla thead th { background:#fff3e6; color:#e8590c; padding:12px 16px; text-align:left; font-weight:600; border-bottom:2px solid #f0d0b0; }
   .tabla tbody td { padding:12px 16px; border-bottom:1px solid #f0f0f5; color:#444; }
@@ -70,172 +35,112 @@
   .sin-datos { text-align:center; color:#aaa; padding:40px; font-size:15px; }
 
   /* BOTONES ACCIÓN */
-  .btn-editar, .btn-eliminar {
-    border:none; padding:6px 12px;
-    border-radius:8px; font-size:13px;
-    cursor:pointer; text-decoration:none;
-    display:inline-block; margin-right:4px;
-    transition:background 0.2s;
-  }
+  .btn-editar, .btn-eliminar { border:none; padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; display:inline-block; margin-right:4px; transition:background 0.2s; }
   .btn-editar { background:#fff3e6; color:#e8590c; }
   .btn-editar:hover { background:#ffe0c0; }
   .btn-eliminar { background:#ffe3e3; color:#d9480f; }
   .btn-eliminar:hover { background:#ffcaca; }
 
   /* INPUTS DEL MODAL */
-  .input-modal {
-    width:100%; padding:10px 14px;
-    border:1px solid #ddd; border-radius:10px;
-    font-size:14px; outline:none;
-    transition:border 0.2s;
-  }
+  .input-modal { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; transition:border 0.2s; }
   .input-modal:focus { border-color:#e8590c; }
   .label-modal { display:block; margin-bottom:6px; font-size:13px; color:#555; }
 
-  /* GRID DOS COLUMNAS para OD y OI lado a lado */
-  .grid-ojos {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-bottom:16px;
-  }
+  /* GRID OJO DERECHO E IZQUIERDO lado a lado */
+  .grid-ojos { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:16px; }
+  .seccion-ojo { background:#fff8f5; border:1px solid #f0d0b0; border-radius:10px; padding:16px; }
+  .seccion-ojo h4 { color:#e8590c; margin-bottom:12px; font-size:14px; }
 
-  .seccion-ojo {
-    background:#fff8f5;
-    border:1px solid #f0d0b0;
-    border-radius:10px;
-    padding:16px;
-  }
+{% endblock %}
 
-  .seccion-ojo h4 {
-    color:#e8590c;
-    margin-bottom:12px;
-    font-size:14px;
-  }
-</style>
-</head>
-<body>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">Mi App</div>
-    <nav>
-      <a href="{{ url_for('applayout') }}"><span class="icon">🏠</span> Inicio</a>
-      <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}"><span class="icon">🧑‍🤝‍🧑</span> Pacientes</a>
+<!-- ================================================================
+     HUECO 4 — contenido principal de fórmulas
+     ================================================================ -->
+{% block contenido %}
 
-      <!-- Fórmulas marcado como activo -->
-      <a href="{{ url_for('bluep_formulas.crear_formula_route') }}" class="active">
-        <span class="icon">💊</span> Fórmulas
-      </a>
-
-      <a href="#"><span class="icon">🧾</span> Facturas</a>
-      <a href="#"><span class="icon">📅</span> Citas</a>
-      <a href="{{ url_for('logout') }}" class="salir"><span class="icon">🚪</span> Salir</a>
-    </nav>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main">
-    <header>
-      <h1>Fórmulas</h1>
-      <p>Bienvenida, {{ usuario.nombre }} {{ usuario.apellido }}</p>
-    </header>
-
-    <div class="content">
-
-      <!-- Mensajes flash -->
-      {% for mensaje in get_flashed_messages() %}
-        <div class="flash-mensaje">{{ mensaje }}</div>
-      {% endfor %}
-
-      <!-- BARRA DE ACCIONES -->
-      <div class="barra-acciones">
-        <h2>Lista de Fórmulas</h2>
-        <!-- Botón que abre el modal -->
-        <a href="#" class="btn-agregar"
-           onclick="document.getElementById('modal-agregar').style.display='flex'">
-          + Agregar Fórmula
-        </a>
-      </div>
-
-      <!-- TABLA DE FÓRMULAS -->
-      <div class="card">
-        {% if formulas %}
-          <table class="tabla">
-            <thead>
-              <tr>
-                <th>Paciente ID</th>
-                <th>Fecha</th>
-                <th>Vencimiento</th>
-                <th>Próx. Control</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for formula in formulas %}
-              <tr>
-                <td>{{ formula.paciente_id }}</td>
-                <td>{{ formula.fecha.strftime('%d/%m/%Y') if formula.fecha else '-' }}</td>
-                <td>{{ formula.fecha_vencimiento.strftime('%d/%m/%Y') if formula.fecha_vencimiento else '-' }}</td>
-                <td>{{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}</td>
-                <td>{{ formula.observaciones or '-' }}</td>
-                <td>
-                  <!-- Editar -->
-                  <a href="{{ url_for('bluep_formulas.editar_formula_route', id=formula.id) }}"
-                     class="btn-editar">✏️ Editar</a>
-
-                  <!-- Eliminar — POST por seguridad -->
-                  <form action="{{ url_for('bluep_formulas.eliminar_formula_route', id=formula.id) }}"
-                        method="POST" style="display:inline;">
-                    <button type="submit" class="btn-eliminar"
-                            onclick="return confirm('¿Eliminar esta fórmula?')">
-                      🗑️ Eliminar
-                    </button>
-                  </form>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <p class="sin-datos">No hay fórmulas registradas aún.</p>
-        {% endif %}
-      </div>
-
-    </div>
+  <!-- BARRA DE ACCIONES -->
+  <div class="barra-acciones">
+    <h2>Lista de Fórmulas</h2>
+    <!-- Botón que abre el modal -->
+    <a href="#" class="btn-agregar"
+       onclick="document.getElementById('modal-agregar').style.display='flex'">
+      + Agregar Fórmula
+    </a>
   </div>
 
-  <!-- ================================================================
-       MODAL AGREGAR FÓRMULA
-       ================================================================ -->
+  <!-- TABLA DE FÓRMULAS -->
+  <div class="card">
+    {% if formulas %}
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Paciente ID</th>
+            <th>Fecha Receta</th>
+            <th>Vencimiento</th>
+            <th>Próx. Control</th>
+            <th>Observaciones</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for formula in formulas %}
+          <tr>
+            <td>{{ formula.paciente_id }}</td>
+            <td>{{ formula.fecha.strftime('%d/%m/%Y') if formula.fecha else '-' }}</td>
+            <td>{{ formula.fecha_vencimiento.strftime('%d/%m/%Y') if formula.fecha_vencimiento else '-' }}</td>
+            <td>{{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}</td>
+            <td>{{ formula.observaciones or '-' }}</td>
+            <td>
+              <!-- Editar -->
+              <a href="{{ url_for('bluep_formulas.editar_formula_route', id=formula.id) }}"
+                 class="btn-editar">✏️ Editar</a>
+
+              <!-- Eliminar — POST por seguridad -->
+              <form action="{{ url_for('bluep_formulas.eliminar_formula_route', id=formula.id) }}"
+                    method="POST" style="display:inline;">
+                <button type="submit" class="btn-eliminar"
+                        onclick="return confirm('¿Eliminar esta fórmula?')">
+                  🗑️ Eliminar
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="sin-datos">No hay fórmulas registradas aún.</p>
+    {% endif %}
+  </div>
+
+{% endblock %}
+
+
+<!-- ================================================================
+     HUECO 5 — modal agregar fórmula
+     ================================================================ -->
+{% block modales %}
+
   <div id="modal-agregar" style="
     display:none; position:fixed;
     top:0; left:0; width:100%; height:100%;
     background:rgba(0,0,0,0.4);
-    justify-content:center; align-items:center;
-    z-index:999; overflow-y:auto;
+    justify-content:center; align-items:flex-start;
+    z-index:999; overflow-y:auto; padding:20px;
   ">
-    <div style="
-      background:white; border-radius:16px;
-      padding:32px; width:700px; max-width:95%;
-      box-shadow:0 8px 32px rgba(0,0,0,0.2);
-      margin:20px auto;
-    ">
+    <div style="background:white; border-radius:16px; padding:32px; width:700px; max-width:95%; box-shadow:0 8px 32px rgba(0,0,0,0.2); margin:auto;">
+
       <h3 style="color:#d9480f; margin-bottom:20px;">Agregar Fórmula</h3>
 
       <form method="POST" action="{{ url_for('bluep_formulas.crear_formula_route') }}">
 
-        <!-- ============================================================
-             DATOS GENERALES
-             ============================================================ -->
+        <!-- DATOS GENERALES -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
 
-          <!-- paciente_id — en el futuro cámbialo por un <select>
-               que cargue los pacientes desde la BD -->
+          <!-- TODO: cambiar por <select> con lista de pacientes de la BD -->
           <div>
             <label class="label-modal">ID Paciente</label>
-            <!-- TODO: cambiar por <select> con lista de pacientes -->
             <input type="number" name="paciente_id" required class="input-modal">
           </div>
 
@@ -261,9 +166,7 @@
           <input type="text" name="observaciones" class="input-modal">
         </div>
 
-        <!-- ============================================================
-             OJOS — OD y OI lado a lado
-             ============================================================ -->
+        <!-- OJOS — OD y OI lado a lado -->
         <div class="grid-ojos">
 
           <!-- OJO DERECHO -->
@@ -274,44 +177,30 @@
               <label class="label-modal">Esfera</label>
               <input type="text" name="od_esfera" class="input-modal" placeholder="Ej: -1.25">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Cilindro</label>
               <input type="text" name="od_cilindro" class="input-modal" placeholder="Ej: -0.50">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Eje</label>
               <input type="text" name="od_eje" class="input-modal" placeholder="Ej: 180">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Adición</label>
               <input type="text" name="od_adicion" class="input-modal" placeholder="Ej: +2.00">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Altura Bifocal</label>
               <input type="text" name="od_alturabifocal" class="input-modal">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Distancia Interpupilar</label>
               <input type="text" name="od_distanciainterpupilar" class="input-modal">
             </div>
-
-            <!-- TODO: cambiar por <select> con lista de colores disponibles -->
+            <!-- TODO: cambiar por <select> con colores disponibles -->
             <div>
               <label class="label-modal">Color</label>
               <input type="text" name="od_color" class="input-modal">
-              <!-- EJEMPLO de cómo quedará el select:
-              <select name="od_color" class="input-modal">
-                <option value="">Seleccione...</option>
-                <option value="blanco">Blanco</option>
-                <option value="gris">Gris</option>
-                <option value="cafe">Café</option>
-              </select>
-              -->
             </div>
           </div>
 
@@ -323,49 +212,34 @@
               <label class="label-modal">Esfera</label>
               <input type="text" name="oi_esfera" class="input-modal" placeholder="Ej: -1.25">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Cilindro</label>
               <input type="text" name="oi_cilindro" class="input-modal" placeholder="Ej: -0.50">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Eje</label>
               <input type="text" name="oi_eje" class="input-modal" placeholder="Ej: 180">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Adición</label>
               <input type="text" name="oi_adicion" class="input-modal" placeholder="Ej: +2.00">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Altura Bifocal</label>
               <input type="text" name="oi_alturabifocal" class="input-modal">
             </div>
-
             <div style="margin-bottom:10px;">
               <label class="label-modal">Distancia Interpupilar</label>
               <input type="text" name="oi_distanciainterpupilar" class="input-modal">
             </div>
-
-            <!-- TODO: cambiar por <select> con lista de colores disponibles -->
+            <!-- TODO: cambiar por <select> con colores disponibles -->
             <div>
               <label class="label-modal">Color</label>
               <input type="text" name="oi_color" class="input-modal">
-              <!-- EJEMPLO de cómo quedará el select:
-              <select name="oi_color" class="input-modal">
-                <option value="">Seleccione...</option>
-                <option value="blanco">Blanco</option>
-                <option value="gris">Gris</option>
-                <option value="cafe">Café</option>
-              </select>
-              -->
             </div>
           </div>
 
         </div>
-        <!-- fin grid ojos -->
 
         <!-- BOTONES -->
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
@@ -384,5 +258,4 @@
     </div>
   </div>
 
-</body>
-</html>
+{% endblock %}

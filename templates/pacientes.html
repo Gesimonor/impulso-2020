@@ -1,503 +1,210 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pacientes</title>
-<style>
+<!-- ================================================================
+     HERENCIA — le dice a Jinja2 que use base.html como plantilla madre
+     Todo el sidebar, header y flash vienen automáticamente de base.html
+     ================================================================ -->
+{% extends "base.html" %}
 
-  /* ===================================================================
-     RESET GENERAL
-     Quita márgenes y rellenos por defecto de todos los elementos
-     =================================================================== */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Arial, sans-serif;
-  }
 
-  /* ===================================================================
-     CUERPO PRINCIPAL
-     display:flex hace que sidebar y main queden lado a lado
-     =================================================================== */
-  body {
-    display: flex;
-    height: 100vh;
-    background-color: #f7f7fb;
-  }
+<!-- ================================================================
+     HUECO 1 — título de la pestaña del navegador
+     ================================================================ -->
+{% block titulo %}Pacientes{% endblock %}
 
-  /* ===================================================================
-     BARRA LATERAL (SIDEBAR) — igual que app-layout.html
-     =================================================================== */
-  .sidebar {
-    width: 220px;
-    background-color: #ffffff;
-    border-right: 1px solid #e8e8f0;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.03);
-  }
 
-  .sidebar .logo {
-    text-align: center;
-    font-weight: 700;
-    font-size: 20px;
-    color: #e8590c;
-    margin-bottom: 30px;
-    padding: 0 20px;
-  }
+<!-- ================================================================
+     HUECO 2 — título del header naranja
+     ================================================================ -->
+{% block titulo_pagina %}Pacientes{% endblock %}
 
-  .sidebar nav {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
 
-  .sidebar a {
-    text-decoration: none;
-    color: #555;
-    padding: 14px 24px;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-left: 4px solid transparent;
-    transition: all 0.2s ease;
-  }
+<!-- ================================================================
+     HUECO 3 — CSS específico de esta página
+     Solo afecta a pacientes.html, no a las demás páginas
+     ================================================================ -->
+{% block estilos %}
 
-  .sidebar a:hover {
-    background-color: #fff3e6;
-    color: #e8590c;
-  }
+  /* BARRA DE ACCIONES — título izquierda, botón derecha */
+  .barra-acciones { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+  .barra-acciones h2 { color:#d9480f; font-size:20px; }
 
-  .sidebar a.active {
-    background: linear-gradient(90deg, #fff3e6, #ffffff);
-    color: #e8590c;
-    border-left: 4px solid #f76707;
-    font-weight: 600;
-  }
+  /* BOTÓN AGREGAR */
+  .btn-agregar { background-color:#e8590c; color:white; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:background 0.2s; }
+  .btn-agregar:hover { background-color:#c94d0a; }
 
-  .sidebar .icon { width: 20px; text-align: center; }
+  /* TARJETA CONTENEDORA */
+  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 
-  .sidebar .salir {
-    margin-top: auto;
-    color: #d9480f;
-    border-top: 1px solid #eee;
-    padding-top: 16px;
-  }
+  /* TABLA */
+  .tabla-pacientes { width:100%; border-collapse:collapse; font-size:14px; }
+  .tabla-pacientes thead th { background:#fff3e6; color:#e8590c; padding:12px 16px; text-align:left; font-weight:600; border-bottom:2px solid #f0d0b0; }
+  .tabla-pacientes tbody td { padding:12px 16px; border-bottom:1px solid #f0f0f5; color:#444; }
+  .tabla-pacientes tbody tr:hover { background:#fafafa; }
+  .sin-pacientes { text-align:center; color:#aaa; padding:40px; font-size:15px; }
 
-  .sidebar .salir:hover { background-color: #ffe3e3; }
+  /* BOTONES EDITAR Y ELIMINAR */
+  .btn-editar, .btn-eliminar { border:none; padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; display:inline-block; margin-right:4px; transition:background 0.2s; }
+  .btn-editar { background:#fff3e6; color:#e8590c; }
+  .btn-editar:hover { background:#ffe0c0; }
+  .btn-eliminar { background:#ffe3e3; color:#d9480f; }
+  .btn-eliminar:hover { background:#ffcaca; }
 
-  /* ===================================================================
-     CONTENIDO PRINCIPAL (MAIN)
-     =================================================================== */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+  /* INPUTS DEL MODAL */
+  .input-modal { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; transition:border 0.2s; }
+  .input-modal:focus { border-color:#e8590c; }
+  .label-modal { display:block; margin-bottom:6px; font-size:13px; color:#555; }
 
-  /* ===================================================================
-     ENCABEZADO — barra superior con título y bienvenida
-     =================================================================== */
-  header {
-    background: linear-gradient(120deg, #ff9a56, #ff6f91, #ffb648);
-    color: white;
-    padding: 24px 32px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  }
+{% endblock %}
 
-  header h1 { font-size: 24px; font-weight: 700; }
-  header p  { font-size: 14px; opacity: 0.9; margin-top: 4px; }
 
-  /* ===================================================================
-     ZONA DE CONTENIDO — área scrolleable
-     =================================================================== */
-  .content {
-    flex: 1;
-    padding: 32px;
-    overflow-y: auto;
-  }
+<!-- ================================================================
+     HUECO 4 — contenido principal de la página
+     Aquí va la tabla de pacientes y la barra de acciones
+     ================================================================ -->
+{% block contenido %}
 
-  /* ===================================================================
-     BARRA SUPERIOR DE ACCIONES
-     Contiene el título "Pacientes" y el botón "Agregar" a la derecha
-     display:flex + justify-content:space-between los separa
-     =================================================================== */
-  .barra-acciones {
-    display: flex;
-    justify-content: space-between; /* título a la izquierda, botón a la derecha */
-    align-items: center;
-    margin-bottom: 24px;
-  }
+  <!-- BARRA DE ACCIONES — título y botón agregar -->
+  <div class="barra-acciones">
+    <h2>Lista de Pacientes</h2>
 
-  .barra-acciones h2 {
-    color: #d9480f;
-    font-size: 20px;
-  }
-
-  /* ===================================================================
-     BOTÓN AGREGAR PACIENTE
-     border-radius:10px le da las esquinas redondeadas que pediste
-     =================================================================== */
-  .btn-agregar {
-    background-color: #e8590c;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px; /* ← esquinas redondeadas */
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s ease;
-  }
-
-  .btn-agregar:hover { background-color: #c94d0a; }
-
-  /* ===================================================================
-     MENSAJES FLASH
-     Aparecen cuando se crea, edita o elimina un paciente
-     =================================================================== */
-  .flash-mensaje {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 14px;
-  }
-
-  /* ===================================================================
-     TARJETA CONTENEDORA DE LA TABLA
-     =================================================================== */
-  .card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-
-  /* ===================================================================
-     TABLA DE PACIENTES
-     width:100% ocupa todo el ancho de la tarjeta
-     border-collapse elimina el doble borde entre celdas
-     =================================================================== */
-  .tabla-pacientes {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  /* Encabezados de la tabla */
-  .tabla-pacientes thead th {
-    background-color: #fff3e6;
-    color: #e8590c;
-    padding: 12px 16px;
-    text-align: left;
-    font-weight: 600;
-    border-bottom: 2px solid #f0d0b0;
-  }
-
-  /* Celdas de datos */
-  .tabla-pacientes tbody td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0f0f5;
-    color: #444;
-  }
-
-  /* Efecto hover en cada fila */
-  .tabla-pacientes tbody tr:hover {
-    background-color: #fafafa;
-  }
-
-  /* ===================================================================
-     BOTONES DE ACCIÓN (editar y eliminar) dentro de la tabla
-     =================================================================== */
-  .btn-editar, .btn-eliminar {
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px; /* ← esquinas redondeadas */
-    font-size: 13px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    margin-right: 4px;
-    transition: background 0.2s ease;
-  }
-
-  .btn-editar {
-    background-color: #fff3e6;
-    color: #e8590c;
-  }
-
-  .btn-editar:hover { background-color: #ffe0c0; }
-
-  .btn-eliminar {
-    background-color: #ffe3e3;
-    color: #d9480f;
-  }
-
-  .btn-eliminar:hover { background-color: #ffcaca; }
-
-  /* Mensaje cuando no hay pacientes */
-  .sin-pacientes {
-    text-align: center;
-    color: #aaa;
-    padding: 40px;
-    font-size: 15px;
-  }
-
-</style>
-</head>
-<body>
-
-  <!-- ================================================================
-       SIDEBAR — igual que en app-layout.html
-       ================================================================ -->
-  <aside class="sidebar">
-    <div class="logo">Mi App</div>
-    <nav>
-      <a href="{{ url_for('applayout') }}"><span class="icon">🏠</span> Inicio</a>
-      <a href="#"><span class="icon">🧾</span> Facturas</a>
-
-      <!-- Pacientes marcado como activo porque estamos en esta sección -->
-      <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}" class="active">
-        <span class="icon">🧑‍🤝‍🧑</span> Pacientes
-      </a> 
-
-      <a href="{{ url_for('bluep_formulas.crear_formula_route') }}"><span class="icon">💊</span> Fórmulas</a>
-      <a href="#"><span class="icon">📅</span> Citas</a>
-      <a href="{{ url_for('logout') }}" class="salir">
-        <span class="icon">🚪</span> Salir
-      </a>
-    </nav>
-  </aside>
-
-  <!-- ================================================================
-       MAIN — contenido principal
-       ================================================================ -->
-  <div class="main">
-
-    <!-- Encabezado con bienvenida -->
-    <header>
-      <h1>Pacientes</h1>
-      <p>Bienvenida, {{ usuario.nombre }} {{ usuario.apellido }}</p>
-    </header>
-
-    <div class="content">
-
-      <!-- ============================================================
-           MENSAJES FLASH
-           Se muestran cuando se crea, edita o elimina un paciente
-           get_flashed_messages() trae los mensajes guardados con flash()
-           ============================================================ -->
-      {% for mensaje in get_flashed_messages() %}
-        <div class="flash-mensaje">{{ mensaje }}</div>
-      {% endfor %}
-
-      <!-- ============================================================
-           BARRA DE ACCIONES
-           Título a la izquierda y botón Agregar a la derecha
-           ============================================================ -->
-      <div class="barra-acciones">
-        <h2>Lista de Pacientes</h2>
-
-        <!-- Botón que abre el formulario de agregar paciente -->
-        <!-- Por ahora abre un modal, después lo conectamos -->
-        <a href="#" class="btn-agregar" onclick="document.getElementById('modal-agregar').style.display='flex'">
-          + Agregar Paciente
-        </a>
-      </div>
-
-      <!-- ============================================================
-           TARJETA CON LA TABLA DE PACIENTES
-           pacientes viene de listar_pacientes() en bp_pacientes.py
-           ============================================================ -->
-      <div class="card">
-        {% if pacientes %}
-          <table class="tabla-pacientes">
-            <thead>
-              <tr>
-                <!-- Encabezados de cada columna — sin ID como pediste -->
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Documento</th>
-                <th>Celular</th>
-                <th>Correo</th>
-                <th>Fecha Nacimiento</th>
-                <th>Dirección</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- =====================================================
-                   LOOP DE PACIENTES
-                   Jinja2 recorre la lista y crea una fila por paciente
-                   ===================================================== -->
-              {% for paciente in pacientes %}
-              <tr>
-                <td>{{ paciente.nombre }}</td>
-                <td>{{ paciente.apellido }}</td>
-                <td>{{ paciente.documento }}</td>
-                <td>{{ paciente.celular }}</td>
-                <td>{{ paciente.correo }}</td>
-                <td>{{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') if paciente.fecha_nacimiento else '-' }}</td>
-                <td>{{ paciente.direccion }}</td>
-
-                <!-- Botones de acción — el id del paciente va en la URL -->
-                <td>
-                  <!-- Botón editar — lleva al formulario de edición -->
-                  <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}" 
-                     class="btn-editar">✏️ Editar</a>
-
-                  <!-- Botón eliminar — usa un formulario POST para mayor seguridad -->
-                  <!-- No usamos <a href> para eliminar porque debe ser POST, no GET -->
-                  <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}" 
-                        method="POST" style="display:inline;">
-                    <button type="submit" class="btn-eliminar"
-                            onclick="return confirm('¿Seguro que quieres eliminar este paciente?')">
-                      🗑️ Eliminar
-                    </button>
-                  </form>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-
-        {% else %}
-          <!-- Mensaje cuando no hay pacientes en la BD -->
-          <p class="sin-pacientes">No hay pacientes registrados aún.</p>
-        {% endif %}
-      </div>
-
-    </div>
+    <!-- Botón que abre el modal de agregar -->
+    <a href="#" class="btn-agregar"
+       onclick="document.getElementById('modal-agregar').style.display='flex'">
+      + Agregar Paciente
+    </a>
   </div>
 
-  <!-- ================================================================
-       MODAL AGREGAR PACIENTE
-       Aparece encima de la página cuando se hace clic en "+ Agregar"
-       display:none lo oculta por defecto
-       ================================================================ -->
+  <!-- TARJETA CON LA TABLA -->
+  <div class="card">
+
+    <!-- Si hay pacientes → muestra la tabla -->
+    {% if pacientes %}
+      <table class="tabla-pacientes">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Documento</th>
+            <th>Celular</th>
+            <th>Correo</th>
+            <th>Fecha Nacimiento</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Jinja2 recorre la lista y crea una fila por paciente -->
+          {% for paciente in pacientes %}
+          <tr>
+            <td>{{ paciente.nombre }}</td>
+            <td>{{ paciente.apellido }}</td>
+            <td>{{ paciente.documento }}</td>
+            <td>{{ paciente.celular }}</td>
+            <td>{{ paciente.correo }}</td>
+            <td>{{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') if paciente.fecha_nacimiento else '-' }}</td>
+            <td>{{ paciente.direccion }}</td>
+            <td>
+              <!-- Editar — lleva al formulario con el id en la URL -->
+              <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}"
+                 class="btn-editar">✏️ Editar</a>
+
+              <!-- Eliminar — POST por seguridad -->
+              <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}"
+                    method="POST" style="display:inline;">
+                <button type="submit" class="btn-eliminar"
+                        onclick="return confirm('¿Seguro que quieres eliminar este paciente?')">
+                  🗑️ Eliminar
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+
+    <!-- Si no hay pacientes → muestra mensaje -->
+    {% else %}
+      <p class="sin-pacientes">No hay pacientes registrados aún.</p>
+    {% endif %}
+
+  </div>
+
+{% endblock %}
+
+
+<!-- ================================================================
+     HUECO 5 — modal agregar paciente
+     Flota encima de la página — display:none lo oculta por defecto
+     ================================================================ -->
+{% block modales %}
+
   <div id="modal-agregar" style="
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
+    display:none; position:fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center; align-items:center;
+    z-index:999;
   ">
-    <div style="
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      width: 500px;
-      max-width: 90%;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    ">
+    <div style="background:white; border-radius:16px; padding:32px; width:500px; max-width:90%; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+
       <h3 style="color:#d9480f; margin-bottom:20px;">Agregar Paciente</h3>
 
-      <!-- Formulario POST que envía datos a bp_pacientes -->
+      <!-- Formulario POST → bp_pacientes → logica_paciente → BD -->
       <form method="POST" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}">
 
-        <!-- Campo Nombre -->
         <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Nombre</label>
-          <input type="text" name="nombre" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Nombre</label>
+          <input type="text" name="nombre" required class="input-modal">
         </div>
 
-        <!-- Campo Apellido -->
         <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Apellido</label>
-          <input type="text" name="apellido" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Apellido</label>
+          <input type="text" name="apellido" required class="input-modal">
         </div>
 
-        <!-- Campo Documento -->
         <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Documento</label>
-          <input type="text" name="documento" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Documento</label>
+          <input type="text" name="documento" required class="input-modal">
         </div>
 
-        <!-- Campo Celular -->
         <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Celular</label>
-          <input type="text" name="celular" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Celular</label>
+          <input type="text" name="celular" required class="input-modal">
         </div>
 
-        <!-- Campo Correo -->
         <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Correo</label>
-          <input type="email" name="correo" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Correo</label>
+          <input type="email" name="correo" required class="input-modal">
         </div>
 
-        <!-- Campo Fecha Nacimiento -->
         <div style="margin-bottom:14px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Fecha de Nacimiento</label>
-          <input type="date" name="fecha_nacimiento" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Fecha de Nacimiento</label>
+          <input type="date" name="fecha_nacimiento" required class="input-modal">
         </div>
 
-        <!-- Campo Dirección -->
         <div style="margin-bottom:20px;">
-          <label style="display:block; margin-bottom:6px; font-size:13px; color:#555;">Dirección</label>
-          <input type="text" name="direccion" required style="
-            width:100%; padding:10px 14px;
-            border:1px solid #ddd; border-radius:10px;
-            font-size:14px; outline:none;
-          ">
+          <label class="label-modal">Dirección</label>
+          <input type="text" name="direccion" required class="input-modal">
         </div>
 
-        <!-- Botones del formulario -->
+        <!-- Botones del modal -->
         <div style="display:flex; gap:10px; justify-content:flex-end;">
-
-          <!-- Botón cancelar — cierra el modal sin guardar -->
-          <button type="button" onclick="document.getElementById('modal-agregar').style.display='none'" style="
-            padding:10px 20px; border-radius:10px;
-            border:1px solid #ddd; background:white;
-            cursor:pointer; font-size:14px;
-          ">Cancelar</button>
-
-          <!-- Botón guardar — envía el formulario -->
-          <button type="submit" style="
-            padding:10px 20px; border-radius:10px;
-            border:none; background:#e8590c;
-            color:white; cursor:pointer; font-size:14px;
-            font-weight:600;
-          ">Guardar</button>
-
+          <!-- Cancelar — cierra el modal -->
+          <button type="button"
+                  onclick="document.getElementById('modal-agregar').style.display='none'"
+                  style="padding:10px 20px; border-radius:10px; border:1px solid #ddd; background:white; cursor:pointer; font-size:14px;">
+            Cancelar
+          </button>
+          <!-- Guardar — envía el formulario -->
+          <button type="submit"
+                  style="padding:10px 20px; border-radius:10px; border:none; background:#e8590c; color:white; cursor:pointer; font-size:14px; font-weight:600;">
+            Guardar
+          </button>
         </div>
+
       </form>
     </div>
   </div>
 
-</body>
-</html>
+{% endblock %}

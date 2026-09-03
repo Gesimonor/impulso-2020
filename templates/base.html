@@ -60,11 +60,14 @@
     <div class="logo">Impulso 20/20</div>
     <nav>
       <a href="{{ url_for('applayout') }}"><span class="icon">🏠</span> Inicio</a>
-      <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}"><span class="icon">🧑‍🤝‍🧑</span> Pacientes</a>
-      <a href="{{ url_for('bluep_formulas.crear_formula_route') }}"><span class="icon">💊</span> Fórmulas</a>
+      <!--{{ url_for('bluep_pacientes.route') }} -->
+      <a href="#"><span class="icon">🧑‍🤝‍🧑</span> Pacientes</a>
+      <!-- {{ url_for('bluep_formulas.route') }} -->
+      <a href="#"><span class="icon">💊</span> Fórmulas</a>
       <a href="#"><span class="icon">🧾</span> Facturas</a>
       <a href="#"><span class="icon">📅</span> Citas</a>
-      <a href="{{ url_for('logout') }}" class="salir"><span class="icon">🚪</span> Salir</a>
+      <!--{{ url_for('logout') }} -->
+      <a href="#" class="salir"><span class="icon">🚪</span> Salir</a> 
     </nav>
   </aside>
 

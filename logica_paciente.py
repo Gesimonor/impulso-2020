@@ -17,7 +17,7 @@ logica_paciente.py  → sabe de BASE DE DATOS
 
 from datetime import datetime
 from pathlib import Path
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 

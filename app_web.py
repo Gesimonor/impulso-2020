@@ -101,7 +101,7 @@ def login():
         if verificar_contrasena(correo_escrito, password):
             usuario = buscar_por_correo(correo_escrito)
             login_user(UsuarioSesion(usuario))
-            return redirect(url_for("applayout"))
+            return redirect(url_for("base"))
 
         flash("Correo o contraseña incorrectos.") #Este si la validacion no funciona
         return redirect(url_for("login"))
@@ -115,7 +115,7 @@ def login():
 @login_required
 def logout():
     logout_user() #Este miguito borra de las cookies el ID y cierra sesion
-    return redirect(url_for("login"))
+    return redirect(url_for("applayout"))
 
 #Es la página principal después del login
 @app.route("/applayout")

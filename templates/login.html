@@ -148,7 +148,6 @@
              LOGO
              Hoy apunta a un placeholder genérico (via.placeholder.com).
              Cuando tengas el logo real de la óptica, cámbialo por algo
-             como src="{{ url_for('static', filename='logo.png') }}"
              (así lo verás cuando conectemos esto con Flask).
              ============================================================ -->
         <div class="logo-container">
@@ -162,9 +161,8 @@
              EL FORMULARIO
              action="#" y method="POST" están ahí como marcador (todavía
              no apunta a ningún lado real). Cuando lo conectemos a Flask,
-             esto se vuelve: action="{{ url_for('login') }}"
              ============================================================ -->
-        <form action="{{ url_for('login') }}" method="POST">
+        <form action="{{ url_for('iniciar_sesion') }}" method="POST">
  
             <!-- CAMPO DE USUARIO/CORREO -->
             <div class="input-group">

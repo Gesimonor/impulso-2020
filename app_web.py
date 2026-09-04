@@ -61,6 +61,13 @@ class UsuarioSesion(UserMixin):
         self.nombre = datos_usuario.nombre
         self.correo = datos_usuario.correo
         self.rol = datos_usuario.rol
+
+#LA DEL INICIO
+@app.route("/") #este ami / es el http://127.0.0.1:5000 es la pagina de inicio si no quisieras es se puede por ejemplo @app.route("/login")
+def inicio():
+    #Aqui lo que quiere decir es ¿Estas en login? SI: Ve a app-layout NO: Ve a el lgoin 
+    return redirect(url_for("pagina_inicio") if current_user.is_authenticated else url_for("iniciar_sesion"))
+
         
 #LA DE VALIDACION DEL LOGIN
 #Ojo importante esta porque valida que el usuario sigue en loguin, si hace un movimiento dentro de la app valida que el siga en login y aparte que exista en la base
@@ -73,20 +80,14 @@ def cargar_usuario(user_id):
 
 
 
-#LA DEL INICIO
-@app.route("/") #este ami / es el http://127.0.0.1:5000 es la pagina de inicio si no quisieras es se puede por ejemplo @app.route("/login")
-def inicio():
-    #Aqui lo que quiere decir es ¿Estas en login? SI: Ve a app-layout NO: Ve a el lgoin 
-    return redirect(url_for("applayout") if current_user.is_authenticated else url_for("login"))
-
 """
 GET  → la página con los input vacíos 
 POST → los input llenos enviados al servidor 
 """
 @app.route("/login", methods=["GET", "POST"])
-def login():
+def iniciar_sesion():
     if current_user.is_authenticated:
-        return redirect(url_for("applayout"))
+        return redirect(url_for("pagina_inicio"))
 
     if request.method == "POST":
         # OJO: el formulario manda el campo con name="email" (así está
@@ -101,10 +102,10 @@ def login():
         if verificar_contrasena(correo_escrito, password):
             usuario = buscar_por_correo(correo_escrito)
             login_user(UsuarioSesion(usuario))
-            return redirect(url_for("base"))
+            return redirect(url_for("pagina_inicio"))
 
         flash("Correo o contraseña incorrectos.") #Este si la validacion no funciona
-        return redirect(url_for("login"))
+        return redirect(url_for("iniciar_sesion"))
     #Y este es el estado del GET
     return render_template("login.html")
 
@@ -115,12 +116,12 @@ def login():
 @login_required
 def logout():
     logout_user() #Este miguito borra de las cookies el ID y cierra sesion
-    return redirect(url_for("applayout"))
+    return redirect(url_for("iniciar_sesion"))
 
 #Es la página principal después del login
 @app.route("/applayout")
 @login_required
-def applayout():
+def pagina_inicio():
     return render_template("app-layout.html", usuario=current_user)
 
 

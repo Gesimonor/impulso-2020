@@ -28,7 +28,7 @@ def crear_paciente_route():
             direccion=request.form.get("direccion")
         )
         flash("Paciente creado exitosamente") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
-        return redirect(url_for("bluep_pacientes.pacientes")) #1 va en blueprint_pacientes porque es el nombre del blueprint y 2 va en pacientes porque es el nombre de la funcion que tenemos arriba
+        return redirect(url_for("bluep_pacientes.crear_paciente_route")) #1 va en blueprint_pacientes porque es el nombre del blueprint y 2 va en pacientes porque es el nombre de la funcion que tenemos arriba
     """Sin redirect:
         Usuario llena formulario → POST → paciente creado
         Usuario presiona F5 (recargar)

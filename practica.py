@@ -1,5 +1,7 @@
 
 from logica_paciente import Paciente, SessionLocal
+import sqlalchemy
+from logica_formulas import Formula, SessionLocal
 
 with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la base de datos BORRAR CUANDO NO  SE NECESITE
     usuarios = session.query(Paciente).with_entities(   
@@ -15,3 +17,33 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
     for usuario in usuarios:
        # todo_usuario = session.query(Paciente).filter(Paciente.id == usuario.id).first()
         print(usuario)  # ← __repr__ de cada uno
+
+
+
+
+with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la base de datos BORRAR CUANDO NO  SE NECESITE
+    formulas = session.query(Formula).with_entities(   
+        Formula.id,
+        Formula.paciente_id,
+        Formula.fecha,
+        Formula.fecha_vencimiento,
+        Formula.prox_control,
+        Formula.observaciones,
+        Formula.od_esfera,
+        Formula.od_cilindro,
+        Formula.od_eje,
+        Formula.od_adicion,
+        Formula.od_alturabifocal,
+        Formula.od_distanciainterpupilar,
+        Formula.od_color,
+        Formula.oi_esfera,
+        Formula.oi_cilindro,
+        Formula.oi_eje,
+        Formula.oi_adicion,
+        Formula.oi_alturabifocal,
+        Formula.oi_distanciainterpupilar,
+        Formula.oi_color
+    ).all()
+    for formula in formulas:
+       # todo_usuario = session.query(Paciente).filter(Paciente.id == usuario.id).first()
+        print(formula)  # <- __repr__ de cada uno   

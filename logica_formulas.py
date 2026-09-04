@@ -5,7 +5,7 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
 CARPETA_PROYECTO = Path(__file__).parent
-RUTA_BASE_DATOS = CARPETA_PROYECTO / "base_opticaprueba.db"
+RUTA_BASE_DATOS = CARPETA_PROYECTO / "base-opticaprueba.db"
 
 engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
 
@@ -46,7 +46,7 @@ class Formula(Base):
 
     def __repr__(self):
         return f"<Formula {self.id} para paciente {self.paciente_id}>"
-
+#Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(bind=engine)
 
 def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento=None, observaciones=None,

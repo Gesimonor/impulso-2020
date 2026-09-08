@@ -29,7 +29,9 @@ from flask_login import (
 )
 
 from logica_usuario import Usuario, SessionLocal, buscar_por_correo, verificar_contrasena
+from infraestructura_db import Base, engine
 
+Base.metadata.create_all(engine)
 app = Flask(__name__) # Esta variable le indica a Flask como se llama el archivo y donde buscar los archivos y OJO siempre los html con Flask deben llamarsen templates osea la carpeta porque si no FLask no sabe donde buscar los htmkl
 app.secret_key = "cambia-esto-por-una-clave-secreta-real" # y esto es super iportante, resulta que las Cookies de una web guardan los datos miimos para identificarte como ID, rol y correo por ejemplo, si no esta cifrado un hacker tendria axeceso a eso y no lo queremos
 

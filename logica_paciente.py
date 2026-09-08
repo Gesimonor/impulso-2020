@@ -16,10 +16,8 @@ logica_paciente.py  → sabe de BASE DE DATOS
 """
 
 from datetime import datetime
-from pathlib import Path
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from infraestructura_db import Base, SessionLocal, engine
+from sqlalchemy import  Column, Integer, String, DateTime, ForeignKey
+from infraestructura_db import Base, SessionLocal
 
 # ===========================================================================
 # CONEXIÓN Y MODELO
@@ -48,9 +46,6 @@ class Paciente(Base):#Las clases son moldes y estos moldes dan objetos como los 
         return f"<Paciente {self.nombre} {self.apellido} ({self.correo})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
     
 # Crea la tabla si no existe. Si ya existe (como en tu caso), no hace nada.
-Base.metadata.create_all(engine)
-
-
 
 """
 with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la base de datos BORRAR CUANDO NO  SE NECESITE

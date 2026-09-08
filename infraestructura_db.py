@@ -10,6 +10,4 @@ engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
 class Base(DeclarativeBase):
     pass
 
-Base.metadata.create_all(engine)
-
 SessionLocal = sessionmaker(bind=engine) #Esta es la variale para ahcer uso de la tabla de usuarios

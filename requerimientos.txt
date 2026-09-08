@@ -2,3 +2,4 @@ sqlalchemy
 werkzeug
 flask
 flask_login
+python-dateutil

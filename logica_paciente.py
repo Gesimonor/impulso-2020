@@ -16,10 +16,8 @@ logica_paciente.py  → sabe de BASE DE DATOS
 """
 
 from datetime import datetime
-from pathlib import Path
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
-
+from sqlalchemy import  Column, Integer, String, DateTime, ForeignKey
+from infraestructura_db import Base, SessionLocal
 
 # ===========================================================================
 # CONEXIÓN Y MODELO
@@ -30,14 +28,6 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 # ejecute el programa. Así, "usuarios.db" siempre se busca al lado de
 # este archivo — ya no depende de la carpeta desde donde arranques la
 # terminal (que era justo la causa del problema que tenías).
-CARPETA_PROYECTO = Path(__file__).parent
-RUTA_BASE_DATOS = CARPETA_PROYECTO / "base-opticaprueba.db"
-
-engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
-
-
-class Base(DeclarativeBase):
-    pass
 
 class Paciente(Base):#Las clases son moldes y estos moldes dan objetos como los moldes de las galletas 
     __tablename__ = "pacientes" #la variable __tablename__ lo que hace es que le indica a usuarios que es una tabla, y que los datos que le va a entregar a delante son los nombres de las columnas
@@ -56,9 +46,6 @@ class Paciente(Base):#Las clases son moldes y estos moldes dan objetos como los 
         return f"<Paciente {self.nombre} {self.apellido} ({self.correo})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
     
 # Crea la tabla si no existe. Si ya existe (como en tu caso), no hace nada.
-Base.metadata.create_all(engine)
-
-SessionLocal = sessionmaker(bind=engine) #Esta es la variale para ahcer uso de la tabla de usuarios
 
 """
 with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la base de datos BORRAR CUANDO NO  SE NECESITE

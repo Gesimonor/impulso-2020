@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from logica_formulas import crear_formula, consultar_formulas_por_paciente, editar_formula, eliminar_formula, listar_formulas
 from  datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 blueprint_formulas = Blueprint("bluep_formulas", __name__) #le decimos que es un blueprint y que se llama formulas, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de formulas
 
@@ -9,10 +10,12 @@ blueprint_formulas = Blueprint("bluep_formulas", __name__) #le decimos que es un
 @login_required
 def crear_formula_route():
     if request.method == "POST":
+        prox_control_int= int(request.form.get("prox_control"))
+        prox_control_date = (datetime.strptime(request.form.get("fecha"), "%Y-%m-%d")) + relativedelta(months=prox_control_int)
         crear_formula(request.form.get("paciente_id"),
-                      prox_control=request.form.get("prox_control"),
+                      prox_control=prox_control_date,
                       fecha = datetime.strptime(request.form.get("fecha"), "%Y-%m-%d"),
-                      fecha_vencimiento=datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d") if request.form.get("fecha_vencimiento") else None,
+                      fecha_vencimiento=datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d") if request.form.get("fecha_vencimiento") else None, #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
                       observaciones=request.form.get("observaciones"),
                       od_esfera=request.form.get("od_esfera"),
                       od_cilindro=request.form.get("od_cilindro"),

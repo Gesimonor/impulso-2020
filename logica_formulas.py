@@ -1,16 +1,7 @@
 from datetime import datetime
-from pathlib import Path
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from infraestructura_db import Base, SessionLocal
 
-
-CARPETA_PROYECTO = Path(__file__).parent
-RUTA_BASE_DATOS = CARPETA_PROYECTO / "base-opticaprueba.db"
-
-engine = create_engine(f"sqlite:///{RUTA_BASE_DATOS}", echo=False)
-
-class Base(DeclarativeBase):
-    pass
 
 class Formula(Base):
     __tablename__ = "formulas"
@@ -43,11 +34,8 @@ class Formula(Base):
 
     fecha_creacion = Column(DateTime, default=datetime.utcnow)  #
 
-
     def __repr__(self):
         return f"<Formula {self.id} para paciente {self.paciente_id}>"
-#Base.metadata.create_all(engine)
-SessionLocal = sessionmaker(bind=engine)
 
 def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento=None, observaciones=None,
                    od_esfera=None, od_cilindro=None, od_eje=None, od_adicion=None, od_alturabifocal=None,

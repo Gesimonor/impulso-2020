@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block titulo %}Editar Fórmula{% endblock %}
+
+{% block titulo_pagina %}Editar Fórmula{% endblock %}
+
+
+{% block contenido %}
+
+  <div class="card">
+    <h2>Fórmula #{{ formula.id }}</h2>
+
+    {# El id va en la URL para que Flask sepa cuál fórmula editar #}
+    <form method="POST"
+          action="{{ url_for('bluep_formulas.editar_formula_route', id=formula.id) }}">
+
+      {# ---------- DATOS GENERALES ---------- #}
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+
+        <div>
+          <label class="label-modal">ID Paciente</label>
+          <input type="number" name="paciente_id" required class="input-modal"
+                 value="{{ formula.paciente_id }}">
+        </div>
+
+        <div>
+          <label class="label-modal">Fecha de la Receta</label>
+          {# strftime convierte el datetime a texto que entiende input date #}
+          <input type="date" name="fecha" required class="input-modal"
+                 value="{{ formula.fecha.strftime('%Y-%m-%d') if formula.fecha else '' }}">
+        </div>
+
+        <div>
+          <label class="label-modal">Fecha Vencimiento</label>
+          <input type="date" name="fecha_vencimiento" class="input-modal"
+                 value="{{ formula.fecha_vencimiento.strftime('%Y-%m-%d') if formula.fecha_vencimiento else '' }}">
+        </div>
+
+        <div>
+          <label class="label-modal">Próximo Control</label>
+          {# OJO: aquí el select manda MESES, no una fecha.
+             Al editar no sabemos cuántos meses se eligieron originalmente,
+             solo la fecha resultante. Por eso arranca sin preselección. #}
+          <select name="prox_control" class="input-modal">
+            <option value="3">3 meses</option>
+            <option value="6">6 meses</option>
+            <option value="12">1 año</option>
+            <option value="24">2 años</option>
+          </select>
+          <small style="color:#888;">
+            Actual: {{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}
+          </small>
+        </div>
+
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label class="label-modal">Observaciones</label>
+        <input type="text" name="observaciones" class="input-modal"
+               value="{{ formula.observaciones or '' }}">
+      </div>
+
+      {# ---------- OJOS ---------- #}
+      <div class="grid-ojos">
+
+        <div class="seccion-ojo">
+          <h4>👁️ Ojo Derecho (OD)</h4>
+
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Esfera</label>
+            <input type="text" name="od_esfera" class="input-modal" value="{{ formula.od_esfera or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Cilindro</label>
+            <input type="text" name="od_cilindro" class="input-modal" value="{{ formula.od_cilindro or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Eje</label>
+            <input type="text" name="od_eje" class="input-modal" value="{{ formula.od_eje or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Adición</label>
+            <input type="text" name="od_adicion" class="input-modal" value="{{ formula.od_adicion or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Altura Bifocal</label>
+            <input type="text" name="od_alturabifocal" class="input-modal" value="{{ formula.od_alturabifocal or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Distancia Interpupilar</label>
+            <input type="text" name="od_distanciainterpupilar" class="input-modal" value="{{ formula.od_distanciainterpupilar or '' }}">
+          </div>
+          <div>
+            <label class="label-modal">Color</label>
+            <input type="text" name="od_color" class="input-modal" value="{{ formula.od_color or '' }}">
+          </div>
+        </div>
+
+        <div class="seccion-ojo">
+          <h4>👁️ Ojo Izquierdo (OI)</h4>
+
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Esfera</label>
+            <input type="text" name="oi_esfera" class="input-modal" value="{{ formula.oi_esfera or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Cilindro</label>
+            <input type="text" name="oi_cilindro" class="input-modal" value="{{ formula.oi_cilindro or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Eje</label>
+            <input type="text" name="oi_eje" class="input-modal" value="{{ formula.oi_eje or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Adición</label>
+            <input type="text" name="oi_adicion" class="input-modal" value="{{ formula.oi_adicion or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Altura Bifocal</label>
+            <input type="text" name="oi_alturabifocal" class="input-modal" value="{{ formula.oi_alturabifocal or '' }}">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="label-modal">Distancia Interpupilar</label>
+            <input type="text" name="oi_distanciainterpupilar" class="input-modal" value="{{ formula.oi_distanciainterpupilar or '' }}">
+          </div>
+          <div>
+            <label class="label-modal">Color</label>
+            <input type="text" name="oi_color" class="input-modal" value="{{ formula.oi_color or '' }}">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="botones">
+        <a href="{{ url_for('bluep_formulas.crear_formula_route') }}" class="btn-cancelar">Cancelar</a>
+        <button type="submit" class="btn-guardar">Guardar cambios</button>
+      </div>
+
+    </form>
+  </div>
+
+{% endblock %}

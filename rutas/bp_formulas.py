@@ -41,6 +41,15 @@ def crear_formula_route(): #Crea y precarga la lista de las formulas
 @login_required
 def editar_formula_route(id): #EDita y prellena los campos 
     formula = consultar_formula_para_editar(id)
+    if request.method == "POST":
+        editar_formula(
+            id = id,
+            paciente_id = request.form.get("paciente_id"),
+            prox_control = (datetime.strptime(request.from.get("fecha"),"%Y-%m-%d") + relativedelta( months = int(request.from.get("prox_control")))),
+            fecha = (datetime.strptime(request.from.get)),
+            fecha_vencimiento = (datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d"), #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
+            
+        )
     return render_template("editar_formula.html",  usuario=current_user,formula=formula) #GET y se usa  usuario=current_user porque en la base.html tenemos un Bienvenido <usuario ese el nombre y debe llenar ese hueco con susuario
 
 @blueprint_formulas.route("/formulas/eliminar/<int:id>", methods=["POST"])

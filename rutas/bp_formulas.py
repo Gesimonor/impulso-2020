@@ -15,7 +15,7 @@ def crear_formula_route(): #Crea y precarga la lista de las formulas
         crear_formula(request.form.get("paciente_id"),
                       prox_control=prox_control_date,
                       fecha = datetime.strptime(request.form.get("fecha"), "%Y-%m-%d"),
-                      fecha_vencimiento=datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d") if request.form.get("fecha_vencimiento") else None, #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
+                      fecha_vencimiento=datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d"), #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
                       observaciones=request.form.get("observaciones"),
                       od_esfera=request.form.get("od_esfera"),
                       od_cilindro=request.form.get("od_cilindro"),
@@ -45,11 +45,28 @@ def editar_formula_route(id): #EDita y prellena los campos
         editar_formula(
             id = id,
             paciente_id = request.form.get("paciente_id"),
-            prox_control = (datetime.strptime(request.from.get("fecha"),"%Y-%m-%d") + relativedelta( months = int(request.from.get("prox_control")))),
-            fecha = (datetime.strptime(request.from.get)),
-            fecha_vencimiento = (datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d"), #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
-            
+            prox_control = (datetime.strptime(request.form.get("fecha"),"%Y-%m-%d") + relativedelta( months = int(request.form.get("prox_control")))),
+            fecha = (datetime.strptime(request.form.get("fecha"), "%Y-%m-%d")),
+            fecha_vencimiento = (datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d")), #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
+            observaciones = request.form.get("observaciones"),
+            od_esfera = request.form.get("od_esfera"),
+            od_cilindro = request.form.get("od_cilindro"),
+            od_eje = request.form.get("od_eje"),
+            od_adicion = request.form.get("od_adicion"),
+            od_alturabifocal = request.form.get("od_alturabifocal"),
+            od_distanciainterpupilar = request.form.get("od_distanciainterpupilar"),
+            od_color = request.form.get("od_color"),
+            oi_esfera = request.form.get("oi_esfera"),
+            oi_cilindro = request.form.get("oi_cilindro"),
+            oi_eje = request.form.get("oi_eje"),
+            oi_adicion = request.form.get("oi_adicion"),
+            oi_alturabifocal = request.form.get("oi_alturabifocal"),
+            oi_distanciainterpupilar = request.form.get("oi_distanciainterpupilar"),
+            oi_color = request.form.get("oi_color")  
         )
+        flash("Fórmula editada exitosamente")
+        return redirect(url_for("bluep_formulas.crear_formula_route")) #termina todo y lleva de nuevo a la lista de las formulas
+        
     return render_template("editar_formula.html",  usuario=current_user,formula=formula) #GET y se usa  usuario=current_user porque en la base.html tenemos un Bienvenido <usuario ese el nombre y debe llenar ese hueco con susuario
 
 @blueprint_formulas.route("/formulas/eliminar/<int:id>", methods=["POST"])

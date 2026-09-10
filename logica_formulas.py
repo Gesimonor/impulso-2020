@@ -9,7 +9,7 @@ class Formula(Base):
     id = Column(Integer, primary_key=True)
     paciente_id = Column(Integer,ForeignKey("pacientes.id"), nullable=False)
     tipo_formula = Column(String(50), nullable=False, default="propia") #primera fecha de creacion de la formula, se puede cambiar pero es la fecha en que se creo la formula
-    fecha_vencimiento = Column(DateTime, nullable=True)
+    fecha_vencimiento = Column(DateTime, nullable=False)  # fecha de vencimiento de la formula no puede
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow)
     prox_control = Column(DateTime, nullable=False)
     observaciones = Column(String(255), nullable=True)

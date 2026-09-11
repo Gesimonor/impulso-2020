@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block titulo %}Ver Paciente{% endblock %}
+
+{% block titulo_pagina %}Ficha del Paciente{% endblock %}
+
+
+{% block estilos %}
+
+  /* Dos columnas: ficha a la izquierda, tablas a la derecha */
+  .layout-ficha { display:grid; grid-template-columns:320px 1fr; gap:24px; align-items:start; }
+
+  /* Cada dato del paciente */
+  .dato { margin-bottom:14px; }
+  .dato .etiqueta { display:block; font-size:12px; color:#888; margin-bottom:2px; }
+  .dato .valor { font-size:15px; color:#333; }
+
+  /* Separación entre las tablas de la derecha */
+  .bloque-tabla { margin-bottom:24px; }
+  .bloque-tabla h3 { color:#d9480f; font-size:16px; margin-bottom:12px; }
+
+  .btn-ver { background:#fff3e6; color:#e8590c; border:none; padding:6px 12px;
+             border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
+  .btn-ver:hover { background:#ffe0c0; }
+
+  .proximamente { color:#aaa; font-size:14px; padding:24px; text-align:center;
+                  background:#fafafa; border-radius:8px; }
+
+{% endblock %}
+
+
+{% block contenido %}
+
+  <div class="barra-acciones">
+    <h2>{{ paciente.nombre }} {{ paciente.apellido }}</h2>
+    <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}" class="btn-cancelar">← Volver</a>
+  </div>
+
+  <div class="layout-ficha">
+
+    <!-- ===== COLUMNA IZQUIERDA: datos del paciente ===== -->
+    <div class="card">
+      <h2>Datos personales</h2>
+
+      <div class="dato">
+        <span class="etiqueta">Documento</span>
+        <span class="valor">{{ paciente.documento }}</span>
+      </div>
+
+      <div class="dato">
+        <span class="etiqueta">Celular</span>
+        <span class="valor">{{ paciente.celular }}</span>
+      </div>
+
+      <div class="dato">
+        <span class="etiqueta">Correo</span>
+        <span class="valor">{{ paciente.correo }}</span>
+      </div>
+
+      <div class="dato">
+        <span class="etiqueta">Fecha de nacimiento</span>
+        <span class="valor">
+          {{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') if paciente.fecha_nacimiento else '-' }}
+        </span>
+      </div>
+
+      <div class="dato">
+        <span class="etiqueta">Dirección</span>
+        <span class="valor">{{ paciente.direccion }}</span>
+      </div>
+
+      <div class="botones">
+        <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}"
+           class="btn-guardar">Editar</a>
+    
+        <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}"
+                    method="POST" style="display:inline;">
+                <button type="submit" class="btn-guardar"
+                        onclick="return confirm('¿Seguro que quieres eliminar este paciente?')">
+                  🗑️ Eliminar
+        </div>
+    </div>
+
+
+    <!-- ===== COLUMNA DERECHA: las tres tablas ===== -->
+    <div>
+
+      <!-- ---------- FÓRMULAS ---------- -->
+      <div class="bloque-tabla">
+        <div class="card">
+          <h3>Fórmulas</h3>
+
+          {% if formulas %}
+            <table class="tabla">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Próximo control</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for formula in formulas %}
+                <tr>
+                  <td>{{ formula.fecha.strftime('%d/%m/%Y') if formula.fecha else '-' }}</td>
+                  <td>{{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}</td>
+                  <td>
+                    {# TODO: apuntar a una ruta de ver fórmula cuando exista.
+                       Por ahora lleva al editar, que ya funciona. #}
+                    <a href="{{ url_for('bluep_formulas.editar_formula_route', id=formula.id) }}"
+                       class="btn-ver">Ver</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="sin-datos">Este paciente no tiene fórmulas registradas.</p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <!-- ---------- FACTURAS ---------- -->
+      <div class="bloque-tabla">
+        <div class="card">
+          <h3>Facturas</h3>
+
+          <p class="proximamente">Módulo de facturas en construcción.</p>
+
+          {#
+             ESTRUCTURA LISTA PARA CUANDO EXISTA EL MÓDULO.
+             Descomentar y pasar "facturas" desde el blueprint.
+
+          {% if facturas %}
+            <table class="tabla">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Valor compra</th>
+                  <th>Valor pendiente</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for factura in facturas %}
+                <tr>
+                  <td>{{ factura.fecha.strftime('%d/%m/%Y') if factura.fecha else '-' }}</td>
+                  <td>{{ factura.total }}</td>
+                  <td>{{ factura.saldo }}</td>
+                  <td>{{ factura.estado }}</td>
+                  <td><a href="#" class="btn-ver">Ver</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="sin-datos">Este paciente no tiene facturas.</p>
+          {% endif %}
+          #}
+        </div>
+      </div>
+
+
+      <!-- ---------- CITAS ---------- -->
+      <div class="bloque-tabla">
+        <div class="card">
+          <h3>Citas</h3>
+
+          <p class="proximamente">Módulo de citas en construcción.</p>
+
+          {#
+             ESTRUCTURA LISTA PARA CUANDO EXISTA EL MÓDULO.
+
+          {% if citas %}
+            <table class="tabla">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for cita in citas %}
+                <tr>
+                  <td>{{ cita.fecha.strftime('%d/%m/%Y') if cita.fecha else '-' }}</td>
+                  <td><a href="#" class="btn-ver">Ver</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="sin-datos">Este paciente no tiene citas.</p>
+          {% endif %}
+          #}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}

@@ -16,7 +16,7 @@ logica_paciente.py  → sabe de BASE DE DATOS
 """
 
 from datetime import datetime
-from sqlalchemy import  Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import  Column, Integer, String, DateTime, ForeignKey, or_
 from infraestructura_db import Base, SessionLocal
 
 # ===========================================================================
@@ -131,6 +131,21 @@ def listar_pacientes():
     ultimos_20pacientes = db.query(Paciente).order_by(Paciente.fecha_creacion). limit(20).all()
     db.close()
     return ultimos_20pacientes
+
+
+def consultar_pordatos(valor_buscar):
+    with SessionLocal() as db:
+        parametro = f"%{valor_buscar}%" #POr DRY no repitas codigo, que se ejecuten estas operacion1 1 vez y que traiga el dato
+        lista_pordatos = db.query(Paciente).filter(
+            or_(
+                Paciente.nombre.ilike(parametro),
+                Paciente.apellido.ilike(parametro),
+                Paciente.documento.ilike(parametro)
+                )
+        ).all()
+        return lista_pordatos
+
+                   
 
 
 

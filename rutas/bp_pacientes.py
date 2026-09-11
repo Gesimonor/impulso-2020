@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from logica_paciente import crear_paciente, listar_pacientes, consultar_paciente, editar_paciente, eliminar_paciente, buscar_por_id_editar
+from logica_paciente import crear_paciente, listar_pacientes, consultar_pordatos, editar_paciente, eliminar_paciente, buscar_por_id_editar
 from  datetime import datetime
 
 blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es un blueprint y que se llama pacientes, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de pacientes
 
-@blueprint_pacientes.route("/pacientes", methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
+@blueprint_pacientes.route("/pacientes",methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
 @login_required
 #request es un objeto de Flask que contiene toda la información de la petición que llegó
 def crear_paciente_route():
@@ -41,9 +41,12 @@ def crear_paciente_route():
         Usuario presiona F5
         → solo recarga la página, no reenvía el formulario 
     """
-
-    pacientes = listar_pacientes()
-    return render_template("pacientes.html", usuario=current_user, pacientes=pacientes)
+    if  request.args.get("valor_buscar") == None:
+        pacientes = listar_pacientes()
+        return render_template("pacientes.html", usuario=current_user, pacientes=pacientes)
+    else:
+        lista_consultada = consultar_pordatos(request.args.get("valor_buscar"))
+        return render_template("pacientes.html", usuario=current_user, pacientes=lista_consultada)
 
 
 @blueprint_pacientes.route("/pacientes/editar/<int:id>", methods=["GET", "POST"])
@@ -71,3 +74,12 @@ def eliminar_paciente_route(id):
     eliminar_paciente(id)
     flash("Paciente eliminado exitosamente")
     return redirect(url_for("bluep_pacientes.pacientes"))
+
+
+@blueprint_pacientes.route("/pacientes/ver/<int:id>", methods=["GET"])
+@login_required 
+def ver_paciente_route(id):
+    paciente = buscar_por_id_editar(id)
+    return render_template("ver_paciente.html", usuario=current_user, paciente=paciente)
+
+

@@ -66,11 +66,15 @@
   <div class="barra-acciones">
     <h2>Lista de Pacientes</h2>
 
-    <!-- Botón que abre el modal de agregar -->
-    <a href="#" class="btn-agregar"
-       onclick="document.getElementById('modal-agregar').style.display='flex'">
-      + Agregar Paciente
-    </a>
+    <form method="GET" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}"
+      style="display:flex; gap:8px; align-items:center;">
+      <input type="text" name="valor_buscar" class="input-modal" style="width:400px;"
+       placeholder="Buscar por nombre, apellido o documento"
+       value="{{ request.args.get('buscar_paciente', '') }}">
+      <button type="submit" class="btn-agregar">Buscar</button>
+    </form>
+
+    <a href="#" class="btn-agregar">+ Agregar Paciente</a>
   </div>
 
   <!-- TARJETA CON LA TABLA -->
@@ -104,6 +108,10 @@
             <td>{{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') if paciente.fecha_nacimiento else '-' }}</td>
             <td>{{ paciente.direccion }}</td>
             <td>
+
+              <!-- Ver — ficha completa del paciente esta en readme -->
+            <a href="{{ url_for('bluep_pacientes.ver_paciente_route', id=paciente.id) }}"
+              class="btn-editar">👁️ Ver</a>
               <!-- Editar — lleva al formulario con el id en la URL -->
               <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}"
                  class="btn-editar">✏️ Editar</a>

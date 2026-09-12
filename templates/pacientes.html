@@ -74,7 +74,10 @@
       <button type="submit" class="btn-agregar">Buscar</button>
     </form>
 
-    <a href="#" class="btn-agregar">+ Agregar Paciente</a>
+      <button type="button" class="btn-agregar"
+            onclick="document.getElementById('modal-agregar').style.display='flex'">
+      + Agregar Paciente
+    </button>
   </div>
 
   <!-- TARJETA CON LA TABLA -->
@@ -160,6 +163,7 @@
 
       <!-- Formulario POST → bp_pacientes → logica_paciente → BD -->
       <form method="POST" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}">
+        
 
         <div style="margin-bottom:14px;">
           <label class="label-modal">Nombre</label>

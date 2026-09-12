@@ -116,3 +116,8 @@ def listar_formulas():
     ultimas_20formulas = db.query(Formula).order_by(Formula.fecha_creacion).limit(20).all()
     db.close()
     return ultimas_20formulas
+
+def formula_porpaciente(paciente_id):
+    with SessionLocal() as db:
+        formulas = db.query(Formula).filter(Formula.paciente_id == paciente_id).all()
+    return formulas

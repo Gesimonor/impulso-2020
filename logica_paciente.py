@@ -145,7 +145,6 @@ def consultar_pordatos(valor_buscar):
         ).all()
         return lista_pordatos
 
-                   
 
 
 

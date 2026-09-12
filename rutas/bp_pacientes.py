@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from logica_paciente import crear_paciente, listar_pacientes, consultar_pordatos, editar_paciente, eliminar_paciente, buscar_por_id_editar
+from logica_formulas import formula_porpaciente
 from  datetime import datetime
 
 blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es un blueprint y que se llama pacientes, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de pacientes
@@ -65,7 +66,7 @@ def editar_paciente_route(id):
             direccion=request.form.get("direccion")
         )
         flash("Paciente editado exitosamente")
-        return redirect(url_for("bluep_pacientes.pacientes"))
+        #return redirect(url_for("bluep_pacientes.pacientes"))
     return render_template("editar_paciente.html", usuario=current_user, paciente=paciente)
 
 @blueprint_pacientes.route("/pacientes/eliminar/<int:id>", methods=["POST"])
@@ -73,13 +74,14 @@ def editar_paciente_route(id):
 def eliminar_paciente_route(id):
     eliminar_paciente(id)
     flash("Paciente eliminado exitosamente")
-    return redirect(url_for("bluep_pacientes.pacientes"))
+    return redirect(url_for("bluep_pacientes.crear_paciente_route"))
 
 
 @blueprint_pacientes.route("/pacientes/ver/<int:id>", methods=["GET"])
 @login_required 
 def ver_paciente_route(id):
     paciente = buscar_por_id_editar(id)
-    return render_template("ver_paciente.html", usuario=current_user, paciente=paciente)
+    formulas = formula_porpaciente(id)
+    return render_template("ver_paciente.html", usuario=current_user, paciente=paciente, formulas=formulas)
 
 

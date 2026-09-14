@@ -62,21 +62,24 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 
 def crear_paciente(documento, nombre, apellido, celular, correo, fecha_nacimiento, direccion):
     #Pendinete validar que el documento no exista ya en la base de datos, para no crear duplicados
-    db = SessionLocal()
-    nuevo_paciente = Paciente(
-        documento=documento,
-        nombre=nombre,
-        apellido=apellido,
-        celular=celular,
-        correo=correo,
-        fecha_nacimiento=fecha_nacimiento,
-        direccion=direccion
-    )   
-    db.add(nuevo_paciente)
-    db.commit()
-    db.refresh(nuevo_paciente)  # trae el id ya asignado antes de cerrar
-    db.close()
-    return nuevo_paciente
+    with SessionLocal() as db:
+        documento_val = db.query(Paciente).filter(Paciente.documento == documento).first()
+        if documento_val:
+            return None  # Retorna None si el paciente ya existe
+        else:
+            nuevo_paciente = Paciente(
+                documento=documento,
+                nombre=nombre,
+                apellido=apellido,
+                celular=celular,
+                correo=correo,
+                fecha_nacimiento=fecha_nacimiento,
+                direccion=direccion
+            )   
+            db.add(nuevo_paciente)
+            db.commit()
+            db.refresh(nuevo_paciente)  # trae el id ya asignado antes de cerrar
+            return nuevo_paciente
 
 #crear_paciente("123456789", "Juan", "Pérez", "3001234567", "juan@email.com", "1990-01-01", "Calle 123")
 #crear_paciente("987654321", "María", "Gómez", "3007654321", "maria@email.com", "1985-05-15", "Calle 456")

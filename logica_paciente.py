@@ -49,9 +49,9 @@ class Paciente(Base):#Las clases son moldes y estos moldes dan objetos como los 
 
 """
 with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la base de datos BORRAR CUANDO NO  SE NECESITE
-    usuarios = session.query(Usuario).all()
+    usuarios = session.query(Paciente.documento).all()
     for usuario in usuarios:
-        print(usuario)  # ← __repr__ de cada uno
+        print(type(usuario))  # ← __repr__ de cada uno
 """
 # ===========================================================================
 # FUNCIONES DE LÓGICA (crear, consultar, modificar, eliminar)
@@ -63,10 +63,6 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 def crear_paciente(documento, nombre, apellido, celular, correo, fecha_nacimiento, direccion):
     #Pendinete validar que el documento no exista ya en la base de datos, para no crear duplicados
     with SessionLocal() as db:
-        documento_val = db.query(Paciente).filter(Paciente.documento == documento).first()
-        if documento_val:
-            return None  # Retorna None si el paciente ya existe
-        else:
             nuevo_paciente = Paciente(
                 documento=documento,
                 nombre=nombre,
@@ -81,44 +77,56 @@ def crear_paciente(documento, nombre, apellido, celular, correo, fecha_nacimient
             db.refresh(nuevo_paciente)  # trae el id ya asignado antes de cerrar
             return nuevo_paciente
 
-#crear_paciente("123456789", "Juan", "Pérez", "3001234567", "juan@email.com", "1990-01-01", "Calle 123")
+#crear_paciente("1007773202", "Juan", "Pérez", "3001234567", "juan@email.com", "1990-01-01", "Calle 123")
 #crear_paciente("987654321", "María", "Gómez", "3007654321", "maria@email.com", "1985-05-15", "Calle 456")
 
+
+documento = "1007773202"
+def validar_duplicado(documento):
+    with SessionLocal() as db:
+        documento_val = db.query(Paciente.documento).filter(Paciente.documento == documento).first()
+        if documento_val == None:
+            respuesta = "No existe" # Devuelve None si no existe, o el objeto Paciente si ya existe
+        else:
+            respuesta = "Ya existe"
+    return respuesta
+    
+prueba = validar_duplicado(documento)
+print(prueba)
+
+#print (prueba)  # Imprime None si el paciente ya existe, o el objeto Paciente si no existe
+
 def consultar_paciente(documento = None,nombre = None):
-    db = SessionLocal()
-    if documento == None and nombre == None:
-        db.close()
-        return None #este es el caso en que no se encuentra el paciente por documento y nombre
-    elif documento:
-        paciente_pordocumento = db.query(Paciente).filter(Paciente.documento == documento).first()  
-        db.close()
-        return paciente_pordocumento
-    elif nombre:
-        paciente_pornombre = db.query(Paciente).filter(Paciente.nombre == nombre).all()
-        db.close()
+    with SessionLocal() as db:
+        if documento == None and nombre == None:
+            return None #este es el caso en que no se encuentra el paciente por documento y nombre
+        elif documento:
+            paciente_pordocumento = db.query(Paciente).filter(Paciente.documento == documento).first()  
+            return paciente_pordocumento
+        elif nombre:
+            paciente_pornombre = db.query(Paciente).filter(Paciente.nombre == nombre).all()
+            return paciente_pornombre
         return paciente_pornombre
 
 
 def buscar_por_id_editar(id):
-    db = SessionLocal()
-    paciente_porid = db.query(Paciente).filter(Paciente.id == id).first()
-    db.close()
-    return paciente_porid
+    with SessionLocal() as db:
+        paciente_porid = db.query(Paciente).filter(Paciente.id == id).first()
+        return paciente_porid
 
 def editar_paciente(id,nombre, apellido, documento, celular, correo, fecha_nacimiento, direccion):
-    db = SessionLocal()
-    paciente_modificar = db.query(Paciente).filter(Paciente.id == id).first()
-    paciente_modificar.nombre = nombre
-    paciente_modificar.apellido = apellido 
-    paciente_modificar.documento = documento
-    paciente_modificar.celular = celular
-    paciente_modificar.correo = correo
-    paciente_modificar.fecha_nacimiento = fecha_nacimiento
-    paciente_modificar.direccion = direccion
-    db.commit()
-    db.refresh(paciente_modificar)
-    db.close()
-    return paciente_modificar   
+    with SessionLocal() as db:
+        paciente_modificar = db.query(Paciente).filter(Paciente.id == id).first()
+        paciente_modificar.nombre = nombre
+        paciente_modificar.apellido = apellido 
+        paciente_modificar.documento = documento
+        paciente_modificar.celular = celular
+        paciente_modificar.correo = correo
+        paciente_modificar.fecha_nacimiento = fecha_nacimiento
+        paciente_modificar.direccion = direccion
+        db.commit()
+        db.refresh(paciente_modificar)
+        return paciente_modificar   
 
 
 def eliminar_paciente(id):

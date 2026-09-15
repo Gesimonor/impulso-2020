@@ -163,7 +163,8 @@
 
       <!-- Formulario POST → bp_pacientes → logica_paciente → BD -->
       <form method="POST" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}">
-        
+
+        <div class="flash-mensaje">{{ mensaje }}</div>
 
         <div style="margin-bottom:14px;">
           <label class="label-modal">Nombre</label>

@@ -80,19 +80,15 @@ def crear_paciente(documento, nombre, apellido, celular, correo, fecha_nacimient
 #crear_paciente("1007773202", "Juan", "Pérez", "3001234567", "juan@email.com", "1990-01-01", "Calle 123")
 #crear_paciente("987654321", "María", "Gómez", "3007654321", "maria@email.com", "1985-05-15", "Calle 456")
 
-
-documento = "1007773202"
 def validar_duplicado(documento):
     with SessionLocal() as db:
         documento_val = db.query(Paciente.documento).filter(Paciente.documento == documento).first()
         if documento_val == None:
-            respuesta = "No existe" # Devuelve None si no existe, o el objeto Paciente si ya existe
+            respuesta = False # Devuelve None si no existe, o el objeto Paciente si ya existe
         else:
-            respuesta = "Ya existe"
+            respuesta = True
     return respuesta
     
-prueba = validar_duplicado(documento)
-print(prueba)
 
 #print (prueba)  # Imprime None si el paciente ya existe, o el objeto Paciente si no existe
 

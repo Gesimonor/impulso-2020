@@ -17,9 +17,8 @@ blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es 
 #request es un objeto de Flask que contiene toda la información de la petición que llegó
 def crear_paciente_route():
     if request.method == "POST":
-        if validar_duplicado(request.form.get("documento")) == False:
+        if validar_duplicado(request.form.get("documento")) == True:
             flash("El documento ya está registrado")
-            return redirect("bluep_pacientes.crear_paciente_route")
         else:
             crear_paciente(
                 documento=request.form.get("documento"),

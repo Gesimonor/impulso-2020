@@ -221,3 +221,13 @@
   </div>
 
 {% endblock %}
+
+<script>
+    const formulario = document.querySelector("#modal-agregar form");
+
+    formulario.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        console.log("JavaScript detectó el botón Guardar");
+    });
+</script>

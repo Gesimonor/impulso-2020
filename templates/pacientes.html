@@ -164,7 +164,7 @@
       <!-- Formulario POST → bp_pacientes → logica_paciente → BD -->
       <form method="POST" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}">
 
-        <div class="flash-mensaje">{{ mensaje }}</div>
+        <div id="mensaje-documento" style="display: none; color: red;"></div>
 
         <div style="margin-bottom:14px;">
           <label class="label-modal">Nombre</label>
@@ -222,12 +222,19 @@
 
 {% endblock %}
 
+{% block scripts %}
 <script>
     const formulario = document.querySelector("#modal-agregar form");
 
     formulario.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        console.log("JavaScript detectó el botón Guardar");
+        const documento = formulario.querySelector('[name="documento"]').value;
+        console.log("Documento escrito:", documento);
+
+        const mensaje = formulario.querySelector("#mensaje-documento");
+        mensaje.textContent = "Documento leído: " + documento;
+        mensaje.style.display = "block";
     });
 </script>
+{% endblock %}

@@ -19,6 +19,7 @@ def crear_paciente_route():
     if request.method == "POST":
         if validar_duplicado(request.form.get("documento")) == True:
             flash("El documento ya está registrado")
+            #return render_template("app-layout.html", usuario="Prueba")
         else:
             crear_paciente(
                 documento=request.form.get("documento"),

@@ -66,7 +66,7 @@
   <div class="barra-acciones">
     <h2>Lista de Pacientes</h2>
 
-    <form method="GET" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}"
+    <form method="get" action="{{ url_for('bluep_pacientes.listar_pacientes_route') }}"
       style="display:flex; gap:8px; align-items:center;">
       <input type="text" name="valor_buscar" class="input-modal" style="width:400px;"
        placeholder="Buscar por nombre, apellido o documento"

@@ -30,7 +30,7 @@ def listar_pacientes_route ():
 def crear_paciente_route(): 
     if validar_duplicado(request.form.get("documento")) == True:
         duplicado = True
-        return duplicado
+        return {"duplicado": duplicado}
     else:
         duplicado = False
         crear_paciente(
@@ -42,9 +42,13 @@ def crear_paciente_route():
             fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"), #Esto convierte el texto en una fecha legible para la logicas
             direccion=request.form.get("direccion")
             )
-        flash("Paciente creado exitosamente") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
-        return redirect(url_for("bluep_pacientes.listar_pacientes_route")) #1 va en blueprint_pacientes porque es el nombre del blueprint y 2 va en pacientes porque es el nombre de la funcion que tenemos arriba
-    """Sin redirect:
+        mensaje = flash("Paciente creado exitosamente") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
+        return {
+                "duplicado": duplicado,
+                "redirect": url_for("bluep_pacientes.listar_pacientes_route"),
+                "mensaje": mensaje
+                }
+        """Sin redirect:
         Usuario llena formulario → POST → paciente creado
         Usuario presiona F5 (recargar)
         → el navegador pregunta "¿reenviar el formulario?"
@@ -55,7 +59,7 @@ def crear_paciente_route():
         → redirect a /pacientes → GET limpio
         Usuario presiona F5
         → solo recarga la página, no reenvía el formulario 
-    """
+        """
 
 @blueprint_pacientes.route("/pacientes/editar/<int:id>", methods=["GET", "POST"])
 @login_required 

@@ -224,17 +224,248 @@
 
 {% block scripts %}
 <script>
+
+    // ============================================================
+    // 1. BUSCAMOS EL FORMULARIO EN EL HTML
+    // ============================================================
+    //
+    // document.querySelector(...) busca un elemento dentro de la
+    // página HTML.
+    //
+    // "#modal-agregar form" significa:
+    //    → busca un <form>
+    //    → que esté dentro del elemento que tiene id="modal-agregar"
+    //
+    // El resultado se guarda en la variable "formulario".
+    //
     const formulario = document.querySelector("#modal-agregar form");
 
+
+    // ============================================================
+    // 2. ESPERAMOS A QUE EL USUARIO ENVÍE EL FORMULARIO
+    // ============================================================
+    //
+    // addEventListener() significa:
+    // "JavaScript, quédate pendiente de este evento".
+    //
+    // El evento que estamos vigilando es "submit".
+    //
+    // Cuando el usuario haga clic en el botón de guardar del
+    // formulario, se ejecutará la función que está dentro.
+    //
     formulario.addEventListener("submit", function(event) {
+
+
+        // ========================================================
+        // 3. EVITAMOS EL ENVÍO NORMAL DEL FORMULARIO
+        // ========================================================
+        //
+        // Normalmente, cuando enviamos un formulario HTML:
+        //
+        // formulario
+        //      ↓
+        // navegador
+        //      ↓
+        // Flask
+        //      ↓
+        // cambia/recarga la página
+        //
+        // Pero nosotros queremos que JAVASCRIPT controle el envío.
+        //
+        // preventDefault() cancela el comportamiento normal del
+        // formulario.
+        //
         event.preventDefault();
 
-        const documento = formulario.querySelector('[name="documento"]').value;
+
+        // ========================================================
+        // 4. OBTENEMOS EL DOCUMENTO DEL FORMULARIO
+        // ========================================================
+        //
+        // Buscamos dentro del formulario el elemento que tenga:
+        //
+        // name="documento"
+        //
+        // .value obtiene lo que escribió el usuario.
+        //
+        const documento = formulario.querySelector(
+            '[name="documento"]'
+        ).value;
+
+
+        // Mostramos el documento en la consola del navegador
+        // para comprobar que JavaScript lo está leyendo.
+        //
         console.log("Documento escrito:", documento);
 
-        const mensaje = formulario.querySelector("#mensaje-documento");
-        mensaje.textContent = "Documento leído: " + documento;
-        mensaje.style.display = "block";
+
+        // ========================================================
+        // 5. CREAMOS FormData
+        // ========================================================
+        //
+        // FormData toma los datos que existen dentro del formulario.
+        //
+        // Por ejemplo, si el formulario tiene:
+        //
+        // documento = 123456
+        // nombre = Luz
+        // apellido = Pérez
+        // celular = 3001234567
+        //
+        // FormData recoge esos datos para poder enviarlos a Flask.
+        //
+        const datosFormulario = new FormData(formulario);
+
+
+        // ========================================================
+        // 6. HACEMOS LA PETICIÓN A FLASK CON fetch()
+        // ========================================================
+        //
+        // fetch() es la función de JavaScript que permite hacer una
+        // petición al servidor.
+        //
+        // Aquí estamos llamando a esta dirección:
+        //
+        // /pacientes/crear-paciente
+        //
+        // Esa dirección corresponde a esta ruta de Flask:
+        //
+        // @blueprint_pacientes.route(
+        //     "/pacientes/crear-paciente",
+        //     methods=["POST"]
+        // )
+        //
+        fetch("/pacientes/crear-paciente", {
+
+            // Le decimos a Flask que la petición es POST.
+            method: "POST",
+
+            // Aquí enviamos TODOS los datos del formulario.
+            //
+            // "datosFormulario" contiene documento, nombre,
+            // apellido, celular, correo, etc.
+            body: datosFormulario
+
+        })
+
+        // ========================================================
+        // 7. ESPERAMOS LA RESPUESTA DE FLASK
+        // ========================================================
+        //
+        // fetch() hace una petición y Flask responde.
+        //
+        // La respuesta que viene de Flask queda en la variable
+        // "response".
+        //
+        .then(function(response) {
+
+            console.log("Flask respondió:", response);
+
+            // Como Flask está devolviendo:
+            //
+            // {"duplicado": True}
+            //
+            // le pedimos a JavaScript que convierta esa respuesta
+            // JSON en un objeto que JavaScript pueda leer.
+            //
+            // Después podremos acceder a:
+            //
+            // data.duplicado
+            //
+            return response.json();
+
+        })
+
+
+        // ========================================================
+        // 8. RECIBIMOS LOS DATOS QUE ENVIÓ FLASK
+        // ========================================================
+        //
+        // Aquí "data" contiene lo que Flask devolvió.
+        //
+        // Si Flask encontró un documento duplicado:
+        //
+        // {"duplicado": true}
+        //
+        // entonces:
+        //
+        // data.duplicado
+        //
+        // será:
+        //
+        // true
+        //
+        .then(function(data) {
+
+            console.log("Datos recibidos desde Flask:", data);
+            if (data.duplicado == false) {
+                  window.location.href = data.redirect;
+                }
+
+            console.log("¿Está duplicado?:", data.duplicado);
+
+
+            // ====================================================
+            // 9. PREGUNTAMOS SI EL DOCUMENTO ESTÁ DUPLICADO
+            // ====================================================
+            //
+            // Aquí JavaScript está tomando la información que
+            // Flask le envió.
+            //
+            // Flask:
+            //     {"duplicado": true}
+            //
+            // JavaScript:
+            //     data.duplicado
+            //
+            if (data.duplicado == true) {
+
+                // Buscamos el espacio donde queremos mostrar
+                // el mensaje dentro del formulario.
+                const mensaje = formulario.querySelector(
+                    "#mensaje-documento"
+                );
+
+
+                // Escribimos el mensaje.
+                mensaje.textContent =
+                    "El documento ya está registrado";
+
+
+                // Mostramos el mensaje.
+                mensaje.style.display = "block";
+
+
+                // IMPORTANTE:
+                //
+                // Como NO hacemos ningún redirect ni cerramos
+                // el modal, el formulario permanece abierto.
+            }
+
+        })
+
+        
+        // ========================================================
+        // 10. SI OCURRE UN ERROR
+        // ========================================================
+        //
+        // catch() nos permite detectar errores durante la petición.
+        //
+        // Por ejemplo:
+        // - Flask no está funcionando.
+        // - La ruta está mal escrita.
+        // - Hay un problema en el servidor.
+        //
+        .catch(function(error) {
+
+            console.error(
+                "Ocurrió un error al comunicarse con Flask:",
+                error
+            );
+
+        });
+
     });
+
 </script>
 {% endblock %}

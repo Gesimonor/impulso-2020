@@ -1,54 +1,31 @@
-<!-- ================================================================
-     HERENCIA — le dice a Jinja2 que use base.html como plantilla madre
-     Todo el sidebar, header y flash vienen automáticamente de base.html
-     ================================================================ -->
 {% extends "base.html" %}
 
-
-<!-- ================================================================
-     HUECO 1 — título de la pestaña del navegador
-     ================================================================ -->
 {% block titulo %}Pacientes{% endblock %}
-
-
-<!-- ================================================================
-     HUECO 2 — título del header naranja
-     ================================================================ -->
 {% block titulo_pagina %}Pacientes{% endblock %}
 
 
-<!-- ================================================================
-     HUECO 3 — CSS específico de esta página
-     Solo afecta a pacientes.html, no a las demás páginas
-     ================================================================ -->
 {% block estilos %}
 
-  /* BARRA DE ACCIONES — título izquierda, botón derecha */
   .barra-acciones { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
   .barra-acciones h2 { color:#d9480f; font-size:20px; }
 
-  /* BOTÓN AGREGAR */
   .btn-agregar { background-color:#e8590c; color:white; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:background 0.2s; }
   .btn-agregar:hover { background-color:#c94d0a; }
 
-  /* TARJETA CONTENEDORA */
   .card { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 
-  /* TABLA */
   .tabla-pacientes { width:100%; border-collapse:collapse; font-size:14px; }
   .tabla-pacientes thead th { background:#fff3e6; color:#e8590c; padding:12px 16px; text-align:left; font-weight:600; border-bottom:2px solid #f0d0b0; }
   .tabla-pacientes tbody td { padding:12px 16px; border-bottom:1px solid #f0f0f5; color:#444; }
   .tabla-pacientes tbody tr:hover { background:#fafafa; }
   .sin-pacientes { text-align:center; color:#aaa; padding:40px; font-size:15px; }
 
-  /* BOTONES EDITAR Y ELIMINAR */
   .btn-editar, .btn-eliminar { border:none; padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; display:inline-block; margin-right:4px; transition:background 0.2s; }
   .btn-editar { background:#fff3e6; color:#e8590c; }
   .btn-editar:hover { background:#ffe0c0; }
   .btn-eliminar { background:#ffe3e3; color:#d9480f; }
   .btn-eliminar:hover { background:#ffcaca; }
 
-  /* INPUTS DEL MODAL */
   .input-modal { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; transition:border 0.2s; }
   .input-modal:focus { border-color:#e8590c; }
   .label-modal { display:block; margin-bottom:6px; font-size:13px; color:#555; }
@@ -56,34 +33,27 @@
 {% endblock %}
 
 
-<!-- ================================================================
-     HUECO 4 — contenido principal de la página
-     Aquí va la tabla de pacientes y la barra de acciones
-     ================================================================ -->
 {% block contenido %}
 
-  <!-- BARRA DE ACCIONES — título y botón agregar -->
   <div class="barra-acciones">
     <h2>Lista de Pacientes</h2>
 
-    <form method="get" action="{{ url_for('bluep_pacientes.listar_pacientes_route') }}"
-      style="display:flex; gap:8px; align-items:center;">
+    {# Buscador — GET, porque solo lee. El término queda en la URL. #}
+    <form method="GET" action="{{ url_for('bluep_pacientes.listar_pacientes_route') }}"
+          style="display:flex; gap:8px; align-items:center;">
       <input type="text" name="valor_buscar" class="input-modal" style="width:400px;"
-       placeholder="Buscar por nombre, apellido o documento"
-       value="{{ request.args.get('buscar_paciente', '') }}">
+             placeholder="Buscar por nombre, apellido o documento"
+             value="{{ request.args.get('valor_buscar', '') }}">
       <button type="submit" class="btn-agregar">Buscar</button>
     </form>
 
-      <button type="button" class="btn-agregar"
+    <button type="button" class="btn-agregar"
             onclick="document.getElementById('modal-agregar').style.display='flex'">
       + Agregar Paciente
     </button>
   </div>
 
-  <!-- TARJETA CON LA TABLA -->
   <div class="card">
-
-    <!-- Si hay pacientes → muestra la tabla -->
     {% if pacientes %}
       <table class="tabla-pacientes">
         <thead>
@@ -99,8 +69,6 @@
           </tr>
         </thead>
         <tbody>
-
-          <!-- Jinja2 recorre la lista y crea una fila por paciente -->
           {% for paciente in pacientes %}
           <tr>
             <td>{{ paciente.nombre }}</td>
@@ -111,15 +79,13 @@
             <td>{{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') if paciente.fecha_nacimiento else '-' }}</td>
             <td>{{ paciente.direccion }}</td>
             <td>
+              <a href="{{ url_for('bluep_pacientes.ver_paciente_route', id=paciente.id) }}"
+                 class="btn-editar">👁️ Ver</a>
 
-              <!-- Ver — ficha completa del paciente esta en readme -->
-            <a href="{{ url_for('bluep_pacientes.ver_paciente_route', id=paciente.id) }}"
-              class="btn-editar">👁️ Ver</a>
-              <!-- Editar — lleva al formulario con el id en la URL -->
               <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}"
                  class="btn-editar">✏️ Editar</a>
 
-              <!-- Eliminar — POST por seguridad -->
+              {# Eliminar va en un form POST porque modifica datos #}
               <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}"
                     method="POST" style="display:inline;">
                 <button type="submit" class="btn-eliminar"
@@ -130,24 +96,16 @@
             </td>
           </tr>
           {% endfor %}
-
         </tbody>
       </table>
-
-    <!-- Si no hay pacientes → muestra mensaje -->
     {% else %}
       <p class="sin-pacientes">No hay pacientes registrados aún.</p>
     {% endif %}
-
   </div>
 
 {% endblock %}
 
 
-<!-- ================================================================
-     HUECO 5 — modal agregar paciente
-     Flota encima de la página — display:none lo oculta por defecto
-     ================================================================ -->
 {% block modales %}
 
   <div id="modal-agregar" style="
@@ -161,10 +119,10 @@
 
       <h3 style="color:#d9480f; margin-bottom:20px;">Agregar Paciente</h3>
 
-      <!-- Formulario POST → bp_pacientes → logica_paciente → BD -->
       <form method="POST" action="{{ url_for('bluep_pacientes.crear_paciente_route') }}">
 
-        <div id="mensaje-documento" style="display: none; color: red;"></div>
+        {# Aquí aparece el aviso de documento duplicado. Oculto al inicio. #}
+        <div id="mensaje-documento" style="display:none; color:red; margin-bottom:14px;"></div>
 
         <div style="margin-bottom:14px;">
           <label class="label-modal">Nombre</label>
@@ -201,15 +159,12 @@
           <input type="text" name="direccion" required class="input-modal">
         </div>
 
-        <!-- Botones del modal -->
         <div style="display:flex; gap:10px; justify-content:flex-end;">
-          <!-- Cancelar — cierra el modal -->
           <button type="button"
                   onclick="document.getElementById('modal-agregar').style.display='none'"
                   style="padding:10px 20px; border-radius:10px; border:1px solid #ddd; background:white; cursor:pointer; font-size:14px;">
             Cancelar
           </button>
-          <!-- Guardar — envía el formulario -->
           <button type="submit"
                   style="padding:10px 20px; border-radius:10px; border:none; background:#e8590c; color:white; cursor:pointer; font-size:14px; font-weight:600;">
             Guardar
@@ -222,250 +177,55 @@
 
 {% endblock %}
 
+
 {% block scripts %}
 <script>
 
-    // ============================================================
-    // 1. BUSCAMOS EL FORMULARIO EN EL HTML
-    // ============================================================
-    //
-    // document.querySelector(...) busca un elemento dentro de la
-    // página HTML.
-    //
-    // "#modal-agregar form" significa:
-    //    → busca un <form>
-    //    → que esté dentro del elemento que tiene id="modal-agregar"
-    //
-    // El resultado se guarda en la variable "formulario".
-    //
-    const formulario = document.querySelector("#modal-agregar form");
+  // Sin esto el formulario se enviaría normal y recargaría la página.
+  // Queremos que JavaScript controle el envío para poder mostrar el
+  // error de duplicado sin perder lo que el usuario ya escribió.
 
+  const formulario = document.querySelector("#modal-agregar form");
 
-    // ============================================================
-    // 2. ESPERAMOS A QUE EL USUARIO ENVÍE EL FORMULARIO
-    // ============================================================
-    //
-    // addEventListener() significa:
-    // "JavaScript, quédate pendiente de este evento".
-    //
-    // El evento que estamos vigilando es "submit".
-    //
-    // Cuando el usuario haga clic en el botón de guardar del
-    // formulario, se ejecutará la función que está dentro.
-    //
-    formulario.addEventListener("submit", function(event) {
+  formulario.addEventListener("submit", function(event) {
 
+    // Cancela el envío normal del navegador
+    event.preventDefault();
 
-        // ========================================================
-        // 3. EVITAMOS EL ENVÍO NORMAL DEL FORMULARIO
-        // ========================================================
-        //
-        // Normalmente, cuando enviamos un formulario HTML:
-        //
-        // formulario
-        //      ↓
-        // navegador
-        //      ↓
-        // Flask
-        //      ↓
-        // cambia/recarga la página
-        //
-        // Pero nosotros queremos que JAVASCRIPT controle el envío.
-        //
-        // preventDefault() cancela el comportamiento normal del
-        // formulario.
-        //
-        event.preventDefault();
+    // Recoge todos los campos del formulario
+    const datosFormulario = new FormData(formulario);
 
+    // Manda los datos a Flask sin recargar la página
+    fetch("{{ url_for('bluep_pacientes.crear_paciente_route') }}", {
+      method: "POST",
+      body: datosFormulario
+    })
 
-        // ========================================================
-        // 4. OBTENEMOS EL DOCUMENTO DEL FORMULARIO
-        // ========================================================
-        //
-        // Buscamos dentro del formulario el elemento que tenga:
-        //
-        // name="documento"
-        //
-        // .value obtiene lo que escribió el usuario.
-        //
-        const documento = formulario.querySelector(
-            '[name="documento"]'
-        ).value;
+    // Flask responde con JSON — lo convertimos a objeto JavaScript
+    .then(function(response) {
+      return response.json();
+    })
 
+    // Aquí decidimos qué hacer según lo que respondió Flask
+    .then(function(data) {
 
-        // Mostramos el documento en la consola del navegador
-        // para comprobar que JavaScript lo está leyendo.
-        //
-        console.log("Documento escrito:", documento);
+      if (data.duplicado == true) {
+        // El documento ya existe: mostramos el aviso y dejamos el modal abierto
+        const mensaje = formulario.querySelector("#mensaje-documento");
+        mensaje.textContent = "El documento ya está registrado";
+        mensaje.style.display = "block";
+      } else {
+        // Se guardó bien: vamos a la lista
+        window.location.href = data.redirect;
+      }
 
+    })
 
-        // ========================================================
-        // 5. CREAMOS FormData
-        // ========================================================
-        //
-        // FormData toma los datos que existen dentro del formulario.
-        //
-        // Por ejemplo, si el formulario tiene:
-        //
-        // documento = 123456
-        // nombre = Luz
-        // apellido = Pérez
-        // celular = 3001234567
-        //
-        // FormData recoge esos datos para poder enviarlos a Flask.
-        //
-        const datosFormulario = new FormData(formulario);
-
-
-        // ========================================================
-        // 6. HACEMOS LA PETICIÓN A FLASK CON fetch()
-        // ========================================================
-        //
-        // fetch() es la función de JavaScript que permite hacer una
-        // petición al servidor.
-        //
-        // Aquí estamos llamando a esta dirección:
-        //
-        // /pacientes/crear-paciente
-        //
-        // Esa dirección corresponde a esta ruta de Flask:
-        //
-        // @blueprint_pacientes.route(
-        //     "/pacientes/crear-paciente",
-        //     methods=["POST"]
-        // )
-        //
-        fetch("/pacientes/crear-paciente", {
-
-            // Le decimos a Flask que la petición es POST.
-            method: "POST",
-
-            // Aquí enviamos TODOS los datos del formulario.
-            //
-            // "datosFormulario" contiene documento, nombre,
-            // apellido, celular, correo, etc.
-            body: datosFormulario
-
-        })
-
-        // ========================================================
-        // 7. ESPERAMOS LA RESPUESTA DE FLASK
-        // ========================================================
-        //
-        // fetch() hace una petición y Flask responde.
-        //
-        // La respuesta que viene de Flask queda en la variable
-        // "response".
-        //
-        .then(function(response) {
-
-            console.log("Flask respondió:", response);
-
-            // Como Flask está devolviendo:
-            //
-            // {"duplicado": True}
-            //
-            // le pedimos a JavaScript que convierta esa respuesta
-            // JSON en un objeto que JavaScript pueda leer.
-            //
-            // Después podremos acceder a:
-            //
-            // data.duplicado
-            //
-            return response.json();
-
-        })
-
-
-        // ========================================================
-        // 8. RECIBIMOS LOS DATOS QUE ENVIÓ FLASK
-        // ========================================================
-        //
-        // Aquí "data" contiene lo que Flask devolvió.
-        //
-        // Si Flask encontró un documento duplicado:
-        //
-        // {"duplicado": true}
-        //
-        // entonces:
-        //
-        // data.duplicado
-        //
-        // será:
-        //
-        // true
-        //
-        .then(function(data) {
-
-            console.log("Datos recibidos desde Flask:", data);
-            if (data.duplicado == false) {
-                  window.location.href = data.redirect;
-                }
-
-            console.log("¿Está duplicado?:", data.duplicado);
-
-
-            // ====================================================
-            // 9. PREGUNTAMOS SI EL DOCUMENTO ESTÁ DUPLICADO
-            // ====================================================
-            //
-            // Aquí JavaScript está tomando la información que
-            // Flask le envió.
-            //
-            // Flask:
-            //     {"duplicado": true}
-            //
-            // JavaScript:
-            //     data.duplicado
-            //
-            if (data.duplicado == true) {
-
-                // Buscamos el espacio donde queremos mostrar
-                // el mensaje dentro del formulario.
-                const mensaje = formulario.querySelector(
-                    "#mensaje-documento"
-                );
-
-
-                // Escribimos el mensaje.
-                mensaje.textContent =
-                    "El documento ya está registrado";
-
-
-                // Mostramos el mensaje.
-                mensaje.style.display = "block";
-
-
-                // IMPORTANTE:
-                //
-                // Como NO hacemos ningún redirect ni cerramos
-                // el modal, el formulario permanece abierto.
-            }
-
-        })
-
-        
-        // ========================================================
-        // 10. SI OCURRE UN ERROR
-        // ========================================================
-        //
-        // catch() nos permite detectar errores durante la petición.
-        //
-        // Por ejemplo:
-        // - Flask no está funcionando.
-        // - La ruta está mal escrita.
-        // - Hay un problema en el servidor.
-        //
-        .catch(function(error) {
-
-            console.error(
-                "Ocurrió un error al comunicarse con Flask:",
-                error
-            );
-
-        });
-
+    .catch(function(error) {
+      console.error("Error al comunicarse con Flask:", error);
     });
+
+  });
 
 </script>
 {% endblock %}

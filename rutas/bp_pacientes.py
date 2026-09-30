@@ -16,7 +16,7 @@ blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es 
 @blueprint_pacientes.route("/pacientes",methods=["GET","POST"]) 
 @login_required
 def listar_pacientes_route ():
-    valor_buscar = request.form.get("valor_buscar")
+    valor_buscar = request.args.get("valor_buscar")
     if valor_buscar is None or valor_buscar == "":
         pacientes = listar_pacientes()
         return render_template("pacientes.html", usuario=current_user, pacientes=pacientes)
@@ -42,30 +42,28 @@ def crear_paciente_route():
             fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"), #Esto convierte el texto en una fecha legible para la logicas
             direccion=request.form.get("direccion")
             )
-        mensaje = flash("Paciente creado exitosamente") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
+        flash("Paciente creado exitosamente") #flash es una funcion de Flask que sirve para mostrar mensajes en la pagina web, en este caso se muestra un mensaje de exito cuando se crea un paciente    
         return {
                 "duplicado": duplicado,
-                "redirect": url_for("bluep_pacientes.listar_pacientes_route"),
-                "mensaje": mensaje
+                "redirect": url_for("bluep_pacientes.listar_pacientes_route")
                 }
-        """Sin redirect:
-        Usuario llena formulario → POST → paciente creado
-        Usuario presiona F5 (recargar)
-        → el navegador pregunta "¿reenviar el formulario?"
-        → ¡crea el paciente dos veces! 💀
-
-        Con redirect:
-        Usuario llena formulario → POST → paciente creado
-        → redirect a /pacientes → GET limpio
-        Usuario presiona F5
-        → solo recarga la página, no reenvía el formulario 
-        """
-
 @blueprint_pacientes.route("/pacientes/editar/<int:id>", methods=["GET", "POST"])
 @login_required 
 def editar_paciente_route(id):
     paciente = buscar_por_id_editar(id)
-    if request.method == "POST":
+    resultado = editar_paciente(
+        id=id, 
+        nombre=None, 
+        apellido=None
+        documento=request.form.get("documento"), 
+        celular=None, 
+        correo=None, 
+        fecha_nacimiento=None, 
+        direccion=None)
+    if resultado == False:
+        flash("Paciente no existe")
+        return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
+    elif request.method == "POST":
         editar_paciente(
             id=id,
             documento=request.form.get("documento"),
@@ -83,8 +81,10 @@ def editar_paciente_route(id):
 @blueprint_pacientes.route("/pacientes/eliminar/<int:id>", methods=["POST"])
 @login_required
 def eliminar_paciente_route(id):
-    eliminar_paciente(id)
-    flash("Paciente eliminado exitosamente")
+    if eliminar_paciente(id):
+        flash("Paciente eliminado exitosamente")
+    else:
+        flash("Paciente no existe")
     return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
 
 

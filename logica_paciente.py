@@ -108,30 +108,38 @@ def consultar_paciente(documento = None,nombre = None):
 def buscar_por_id_editar(id):
     with SessionLocal() as db:
         paciente_porid = db.query(Paciente).filter(Paciente.id == id).first()
-        return paciente_porid
+        if paciente_porid:
+            return paciente_porid
+        else:
+            return False
 
 def editar_paciente(id,nombre, apellido, documento, celular, correo, fecha_nacimiento, direccion):
     with SessionLocal() as db:
-        paciente_modificar = db.query(Paciente).filter(Paciente.id == id).first()
-        paciente_modificar.nombre = nombre
-        paciente_modificar.apellido = apellido 
-        paciente_modificar.documento = documento
-        paciente_modificar.celular = celular
-        paciente_modificar.correo = correo
-        paciente_modificar.fecha_nacimiento = fecha_nacimiento
-        paciente_modificar.direccion = direccion
-        db.commit()
-        db.refresh(paciente_modificar)
-        return paciente_modificar   
+        if db.query(Paciente).filter(Paciente.documento == documento, Paciente.id != id).first():
+            return False # Esto significa que hay otro paciente con el mismo documento, no se puede editar
+        else:
+            paciente_modificar = db.query(Paciente).filter(Paciente.id == id).first()
+            paciente_modificar.nombre = nombre
+            paciente_modificar.apellido = apellido 
+            paciente_modificar.documento = documento
+            paciente_modificar.celular = celular
+            paciente_modificar.correo = correo
+            paciente_modificar.fecha_nacimiento = fecha_nacimiento
+            paciente_modificar.direccion = direccion
+            db.commit()
+            db.refresh(paciente_modificar)
+            return paciente_modificar   
 
 
 def eliminar_paciente(id):
-    db = SessionLocal()
-    paciente_eliminar = db.query(Paciente).filter(Paciente.id == id).first()
-    db.delete(paciente_eliminar)
-    db.commit()
-    db.close()
-    return True
+    with SessionLocal() as db:
+        busqueda = db.query(Paciente).filter(Paciente.id == id).first()
+        if busqueda == None:
+            return False
+        else:
+            db.delete(busqueda)
+            db.commit()
+            return True
 
 def listar_pacientes():
     db = SessionLocal()

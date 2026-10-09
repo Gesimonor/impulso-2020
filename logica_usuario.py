@@ -55,33 +55,30 @@ with SessionLocal() as session: #esta funcion imprimira todo lo que contiene la 
 # preocuparse de manejar la sesión manualmente cada vez.
 
 def crear_usuario(nombre, rol, correo, contrasena_texto_plano):
-    db = SessionLocal()
-    nuevo_usuario = Usuario(
-        nombre=nombre, #el pirmero nombre es el nombre de la base y el segundo es el nombre que trae por ejem "Luz Stella"
-        rol=rol,
-        correo=correo,
-        contrasena_hash=generate_password_hash(contrasena_texto_plano),
-    )
-    db.add(nuevo_usuario)
-    db.commit()
-    db.refresh(nuevo_usuario)  # trae el id ya asignado antes de cerrar
-    db.close()
-    return nuevo_usuario
+    with SessionLocal() as db:
+        nuevo_usuario = Usuario(
+            nombre=nombre, #el pirmero nombre es el nombre de la base y el segundo es el nombre que trae por ejem "Luz Stella"
+            rol=rol,
+            correo=correo,
+            contrasena_hash=generate_password_hash(contrasena_texto_plano),
+            )
+        db.add(nuevo_usuario)
+        db.commit()
+        db.refresh(nuevo_usuario)  # trae el id ya asignado antes de cerrar
+        return nuevo_usuario
 
 #crear_usuario("Luz Stella", "admin", "luz@email.com", "123456") #esta funcion es para crear un usuario inicial para poder entrar a la app y no tener que crear un usuario desde la base de datos  
 
 def listar_usuarios():
-    db = SessionLocal()
-    todos = db.query(Usuario).all() #Ojo aqui se trae Usuario ls clase per porwue estamos trabajando SQL ORM que es a base de objetos y la tabla usuarios es un objeto llamado Usuario
-    db.close()
+    with SessionLocal() as db:
+        todos = db.query(Usuario).all() #Ojo aqui se trae Usuario ls clase per porwue estamos trabajando SQL ORM que es a base de objetos y la tabla usuarios es un objeto llamado Usuario
     return todos
 
 
 def buscar_por_correo(correo):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO al filtro toca parametrizarle la condicion y para indicar una columna la debes traer llamando la clase y Fisrt() aunque su principal funcion es tarer el primero tambien es la maners en la que entrega el resuktado , da un objeto y no una lista porque te ahorrar la desenpaquetada
-    db.close()
-    return usuario
+    with SessionLocal() as db:
+        usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO al filtro toca parametrizarle la condicion y para indicar una columna la debes traer llamando la clase y Fisrt() aunque su principal funcion es tarer el primero tambien es la maners en la que entrega el resuktado , da un objeto y no una lista porque te ahorrar la desenpaquetada
+        return usuario
 
 
 def verificar_contrasena(correo, contrasena_escrita):
@@ -92,43 +89,33 @@ def verificar_contrasena(correo, contrasena_escrita):
 
 
 def actualizar_usuario(correo, nuevo_nombre=None, nuevo_rol=None):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO esto es todo el usuario
-    if usuario is None:
-        db.close()
-        return None
-
-    if nuevo_nombre: #nuevo_nombre si no trae dato es None porqeu asi esta actulizar_usuario, si el IF ribe None pues es False y no se ejecuta el IF sencillo
-        usuario.nombre = nuevo_nombre
-    if nuevo_rol:
-        usuario.rol = nuevo_rol
-
-    db.commit()
-    db.close()
-    return usuario
+    with SessionLocal() as db:
+        usuario = db.query(Usuario).filter(Usuario.correo == correo).first() #OJO esto es todo el usuario
+        if usuario is None:
+            return None
+        if nuevo_nombre: #nuevo_nombre si no trae dato es None porqeu asi esta actulizar_usuario, si el IF ribe None pues es False y no se ejecuta el IF sencillo
+            usuario.nombre = nuevo_nombre
+        if nuevo_rol:
+            usuario.rol = nuevo_rol
+        db.commit()
+        return usuario
 
 
 def cambiar_contrasena(correo, nueva_contrasena_texto_plano):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
-    if usuario is None:
-        db.close()
-        return False
-
-    usuario.contrasena_hash = generate_password_hash(nueva_contrasena_texto_plano)#OJO esto es todo el usuario
-    db.commit()
-    db.close()
-    return True
+    with SessionLocal() as db:
+        usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
+        if usuario is None:
+            return False
+        usuario.contrasena_hash = generate_password_hash(nueva_contrasena_texto_plano)#OJO esto es todo el usuario
+        db.commit()
+        return True
 
 
 def eliminar_usuario(correo):
-    db = SessionLocal()
-    usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
-    if usuario is None:
-        db.close()
-        return False
-
-    db.delete(usuario) #eliina el filtro
-    db.commit()
-    db.close()
-    return True
+    with SessionLocal() as db:
+        usuario = db.query(Usuario).filter(Usuario.correo == correo).first()#OJO esto es todo el usuario
+        if usuario is None:
+            return False
+        db.delete(usuario) #eliina el filtro
+        db.commit()
+        return True

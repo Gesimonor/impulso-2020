@@ -54,7 +54,7 @@ def editar_paciente_route(id):
     resultado = editar_paciente(
         id=id, 
         nombre=None, 
-        apellido=None
+        apellido=None,
         documento=request.form.get("documento"), 
         celular=None, 
         correo=None, 

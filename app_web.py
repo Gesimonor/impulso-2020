@@ -45,7 +45,7 @@ app.register_blueprint(blueprint_formulas) #Esta es la que trae el blueprint de 
 
 login_manager = LoginManager() #es el gestor de los usuario, Flask por si solo no sabe de usuarios y pide ayuda a LoginManager para hacer como esa duanas en la mpagina web
 login_manager.init_app(app) #este instala a LoginManager dentro de la pagina web    
-login_manager.login_view = "login" #esta es super importante, si alguien intenta entrar sin estar logeado esta linia dice que automaticamente valla a login.html
+login_manager.login_view = "iniciar_sesion" #esta es super importante, si alguien intenta entrar sin estar logeado esta linia dice que automaticamente valla a login.html
 login_manager.login_message = "Inicia sesión para continuar." # y este es un mensajito para recordarle que debe hacer login para usar la app
 
 

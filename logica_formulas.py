@@ -37,7 +37,7 @@ class Formula(Base):
     def __repr__(self):
         return f"<Formula {self.id} para paciente {self.paciente_id}>"
 
-def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento=None, observaciones=None,
+def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento, observaciones=None,
                    od_esfera=None, od_cilindro=None, od_eje=None, od_adicion=None, od_alturabifocal=None,
                    od_distanciainterpupilar=None, od_color=None,
                    oi_esfera=None, oi_cilindro=None, oi_eje=None, oi_adicion=None, oi_alturabifocal=None,
@@ -86,8 +86,11 @@ def eliminar_formula(formula_id):
 def editar_formula(id, paciente_id, prox_control, fecha, fecha_vencimiento, observaciones,
                    od_esfera, od_cilindro, od_eje, od_adicion, od_alturabifocal, od_distanciainterpupilar, od_color,
                    oi_esfera, oi_cilindro, oi_eje, oi_adicion, oi_alturabifocal, oi_distanciainterpupilar, oi_color):
+    
     with SessionLocal() as db:
         formula_db = db.query(Formula).filter(Formula.id == id).first()
+        if formula_db is None:
+            return False
         formula_db.paciente_id = paciente_id
         formula_db.prox_control = prox_control
         formula_db.fecha = fecha
@@ -112,9 +115,8 @@ def editar_formula(id, paciente_id, prox_control, fecha, fecha_vencimiento, obse
         return formula_db
 
 def listar_formulas():
-    db = SessionLocal()
-    ultimas_20formulas = db.query(Formula).order_by(Formula.fecha_creacion).limit(20).all()
-    db.close()
+    with SessionLocal() as db:
+        ultimas_20formulas = db.query(Formula).order_by(Formula.fecha_creacion).limit(20).all()
     return ultimas_20formulas
 
 def formula_porpaciente(paciente_id):

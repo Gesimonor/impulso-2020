@@ -142,9 +142,8 @@ def eliminar_paciente(id):
             return True
 
 def listar_pacientes():
-    db = SessionLocal()
-    ultimos_20pacientes = db.query(Paciente).order_by(Paciente.fecha_creacion). limit(20).all()
-    db.close()
+    with SessionLocal() as db:
+        ultimos_20pacientes = db.query(Paciente).order_by(Paciente.fecha_creacion).limit(20).all()
     return ultimos_20pacientes
 
 

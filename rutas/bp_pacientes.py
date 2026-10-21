@@ -1,3 +1,10 @@
+#COsas por hacer 
+"""
+1. Hacer un boton de NUeva formula que quede al lado de los otros botones en Ver al lado de formula
+2. QUItar botones de la lista y dejar en solo ver
+"""
+
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from logica_paciente import crear_paciente, listar_pacientes, consultar_pordatos, editar_paciente, eliminar_paciente, buscar_por_id_editar, validar_duplicado, validar_duplicado_editar

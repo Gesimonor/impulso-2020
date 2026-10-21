@@ -1,3 +1,10 @@
+#COsas por hacer
+"""
+1. COlocar la fecha de hoy predetermina en el formulario de crear formula Fecha de la receta
+2. Para editar, precargar el dato del proximo control, porque no le puedar una fecha 
+3. La manera de buscar al paciente y anexarlo a la formula. 
+"""
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from logica_formulas import crear_formula, consultar_formula_para_editar, editar_formula, eliminar_formula, listar_formulas

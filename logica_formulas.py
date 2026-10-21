@@ -72,7 +72,10 @@ def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento, observacio
 def consultar_formula_para_editar(id):
     with SessionLocal() as db:
         formulas = db.query(Formula).filter(Formula.id == id).first()
-    return formulas
+        if formulas is None:
+            return False
+        else:
+            return formulas
 
 def eliminar_formula(formula_id):
     with SessionLocal() as db:

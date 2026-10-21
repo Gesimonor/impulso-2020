@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from logica_paciente import crear_paciente, listar_pacientes, consultar_pordatos, editar_paciente, eliminar_paciente, buscar_por_id_editar, validar_duplicado
+from logica_paciente import crear_paciente, listar_pacientes, consultar_pordatos, editar_paciente, eliminar_paciente, buscar_por_id_editar, validar_duplicado, validar_duplicado_editar
 from logica_formulas import formula_porpaciente
 from  datetime import datetime
 
@@ -51,32 +51,25 @@ def crear_paciente_route():
 @login_required 
 def editar_paciente_route(id):
     paciente = buscar_por_id_editar(id)
-    resultado = editar_paciente(
-        id=id, 
-        nombre=None, 
-        apellido=None,
-        documento=request.form.get("documento"), 
-        celular=None, 
-        correo=None, 
-        fecha_nacimiento=None, 
-        direccion=None)
-    if resultado == False:
-        flash("Paciente no existe")
-        return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
-    elif request.method == "POST":
-        editar_paciente(
-            id=id,
-            documento=request.form.get("documento"),
-            nombre=request.form.get("nombre"),
-            apellido=request.form.get("apellido"),
-            celular=request.form.get("celular"),
-            correo=request.form.get("correo"),
-            fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"),
-            direccion=request.form.get("direccion")
-        )
-        flash("Paciente editado exitosamente")
-        return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
-    return render_template("editar_paciente.html", usuario=current_user, paciente=paciente)
+    resultado = validar_duplicado_editar(id, request.form.get("documento"))
+    if request.method == "POST":
+        if resultado == False:
+            
+                editar_paciente(
+                    id=id,
+                    documento=request.form.get("documento"),
+                    nombre=request.form.get("nombre"),
+                    apellido=request.form.get("apellido"),
+                    celular=request.form.get("celular"),
+                    correo=request.form.get("correo"),
+                    fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"),
+                    direccion=request.form.get("direccion")
+                )
+                flash("Paciente editado exitosamente")
+                return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
+            elif resultado == True:
+                flash("El documento ya existe para otro paciente")
+        return render_template("editar_paciente.html", usuario=current_user, paciente=paciente)
 
 @blueprint_pacientes.route("/pacientes/eliminar/<int:id>", methods=["POST"])
 @login_required

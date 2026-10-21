@@ -88,7 +88,16 @@ def validar_duplicado(documento):
         else:
             respuesta = True
     return respuesta
-    
+
+
+def validar_duplicado_editar(id, documento):
+    with SessionLocal() as db:
+        documento_val = db.query(Paciente.documento).filter(Paciente.documento == documento, Paciente.id != id).first()
+        if documento_val == None:
+            respuesta = False # Devuelve None si no existe, o el objeto Paciente si ya existe
+        else:
+            respuesta = True
+    return respuesta
 
 #print (prueba)  # Imprime None si el paciente ya existe, o el objeto Paciente si no existe
 

@@ -51,25 +51,28 @@ def crear_paciente_route():
 @login_required 
 def editar_paciente_route(id):
     paciente = buscar_por_id_editar(id)
+    if paciente == False:
+        flash("Paciente no existe")
+        return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
     resultado = validar_duplicado_editar(id, request.form.get("documento"))
     if request.method == "POST":
         if resultado == False:
-            
-                editar_paciente(
-                    id=id,
-                    documento=request.form.get("documento"),
-                    nombre=request.form.get("nombre"),
-                    apellido=request.form.get("apellido"),
-                    celular=request.form.get("celular"),
-                    correo=request.form.get("correo"),
-                    fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"),
-                    direccion=request.form.get("direccion")
-                )
-                flash("Paciente editado exitosamente")
-                return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
-            elif resultado == True:
-                flash("El documento ya existe para otro paciente")
-        return render_template("editar_paciente.html", usuario=current_user, paciente=paciente)
+            editar_paciente(
+                id=id,
+                documento=request.form.get("documento"),
+                nombre=request.form.get("nombre"),
+                apellido=request.form.get("apellido"),
+                celular=request.form.get("celular"),
+                correo=request.form.get("correo"),
+                fecha_nacimiento=datetime.strptime(request.form.get("fecha_nacimiento"), "%Y-%m-%d"),
+                direccion=request.form.get("direccion")
+            )
+            flash("Paciente editado exitosamente")
+            return redirect(url_for("bluep_pacientes.listar_pacientes_route"))
+        elif resultado:
+            flash("El documento ya existe para otro paciente")
+
+    return render_template("editar_paciente.html", usuario=current_user, paciente=paciente)
 
 @blueprint_pacientes.route("/pacientes/eliminar/<int:id>", methods=["POST"])
 @login_required

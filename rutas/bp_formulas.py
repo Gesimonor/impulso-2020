@@ -41,8 +41,11 @@ def crear_formula_route(): #Crea y precarga la lista de las formulas
 @login_required
 def editar_formula_route(id): #EDita y prellena los campos 
     formula = consultar_formula_para_editar(id)
-    if request.method == "POST":
-        editar_formula(
+    if formula == False:
+        flash("La fórmula no existe")
+        return redirect(url_for("bluep_formulas.crear_formula_route"))
+    elif request.method == "POST":
+        resultado = editar_formula(
             id = id,
             paciente_id = request.form.get("paciente_id"),
             prox_control = (datetime.strptime(request.form.get("fecha"),"%Y-%m-%d") + relativedelta( months = int(request.form.get("prox_control")))),
@@ -64,16 +67,21 @@ def editar_formula_route(id): #EDita y prellena los campos
             oi_distanciainterpupilar = request.form.get("oi_distanciainterpupilar"),
             oi_color = request.form.get("oi_color")  
         )
-        flash("Fórmula editada exitosamente")
-        return redirect(url_for("bluep_formulas.crear_formula_route")) #termina todo y lleva de nuevo a la lista de las formulas
+        if resultado == False:
+            flash("No se pudo editar, la fórmula ya no existe")
+        else:
+            flash("Fórmula editada exitosamente")
+            return redirect(url_for("bluep_formulas.crear_formula_route"))
         
     return render_template("editar_formula.html",  usuario=current_user,formula=formula) #GET y se usa  usuario=current_user porque en la base.html tenemos un Bienvenido <usuario ese el nombre y debe llenar ese hueco con susuario
 
 @blueprint_formulas.route("/formulas/eliminar/<int:id>", methods=["POST"])
 @login_required
 def eliminar_formula_route(id):
-    eliminar_formula(id)
-    flash("Fórmula eliminada exitosamente")
+    if eliminar_formula(id):
+        flash("Fórmula eliminada exitosamente")
+    else:
+        flash("La fórmula no existe")
     return redirect(url_for("bluep_formulas.crear_formula_route"))
 
         

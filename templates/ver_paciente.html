@@ -33,7 +33,7 @@
 
   <div class="barra-acciones">
     <h2>{{ paciente.nombre }} {{ paciente.apellido }}</h2>
-    <a href="{{ url_for('bluep_pacientes.crear_paciente_route') }}" class="btn-cancelar">← Volver</a>
+    <a href="{{ url_for('bluep_pacientes.listar_pacientes_route') }}" class="btn-cancelar">← Volver</a>
   </div>
 
   <div class="layout-ficha">
@@ -71,7 +71,7 @@
 
       <div class="botones">
         <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}"
-           class="btn-guardar">Editar</a>
+           class="btn-guardar">✏️ Editar</a>
     
         <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}"
                     method="POST" style="display:inline;">

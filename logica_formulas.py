@@ -12,6 +12,7 @@ class Formula(Base):
     fecha_vencimiento = Column(DateTime, nullable=False)  # fecha de vencimiento de la formula no puede
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow)
     prox_control = Column(DateTime, nullable=False)
+    mes_prox_control = Column(Integer, nullable=False)  
     observaciones = Column(String(255), nullable=True)
 
     #Ojo Derecho
@@ -37,7 +38,7 @@ class Formula(Base):
     def __repr__(self):
         return f"<Formula {self.id} para paciente {self.paciente_id}>"
 
-def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento, observaciones=None,
+def crear_formula(paciente_id, prox_control,mes_prox_control, fecha,fecha_vencimiento, observaciones=None,
                    od_esfera=None, od_cilindro=None, od_eje=None, od_adicion=None, od_alturabifocal=None,
                    od_distanciainterpupilar=None, od_color=None,
                    oi_esfera=None, oi_cilindro=None, oi_eje=None, oi_adicion=None, oi_alturabifocal=None,
@@ -48,6 +49,7 @@ def crear_formula(paciente_id, prox_control, fecha,fecha_vencimiento, observacio
         paciente_id=paciente_id,
         fecha_vencimiento=fecha_vencimiento,
         prox_control=prox_control,
+        mes_prox_control=mes_prox_control,
         observaciones=observaciones,
         od_esfera=od_esfera,
         od_cilindro=od_cilindro,
@@ -86,7 +88,7 @@ def eliminar_formula(formula_id):
             return True
         return False
 
-def editar_formula(id, paciente_id, prox_control, fecha, fecha_vencimiento, observaciones,
+def editar_formula(id, paciente_id,prox_control ,mes_prox_control, fecha, fecha_vencimiento, observaciones,
                    od_esfera, od_cilindro, od_eje, od_adicion, od_alturabifocal, od_distanciainterpupilar, od_color,
                    oi_esfera, oi_cilindro, oi_eje, oi_adicion, oi_alturabifocal, oi_distanciainterpupilar, oi_color):
     
@@ -96,6 +98,7 @@ def editar_formula(id, paciente_id, prox_control, fecha, fecha_vencimiento, obse
             return False
         formula_db.paciente_id = paciente_id
         formula_db.prox_control = prox_control
+        formula_db.mes_prox_control = mes_prox_control
         formula_db.fecha = fecha
         formula_db.fecha_vencimiento = fecha_vencimiento
         formula_db.observaciones = observaciones

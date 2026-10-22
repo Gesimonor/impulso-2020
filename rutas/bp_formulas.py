@@ -10,6 +10,7 @@ from flask_login import login_required, current_user
 from logica_formulas import crear_formula, consultar_formula_para_editar, editar_formula, eliminar_formula, listar_formulas
 from  datetime import datetime
 from dateutil.relativedelta import relativedelta
+from logica_paciente import consultar_pordatos
 
 blueprint_formulas = Blueprint("bluep_formulas", __name__) #le decimos que es un blueprint y que se llama formulas, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de formulas
 
@@ -17,10 +18,11 @@ blueprint_formulas = Blueprint("bluep_formulas", __name__) #le decimos que es un
 @login_required
 def crear_formula_route(): #Crea y precarga la lista de las formulas 
     if request.method == "POST":
-        prox_control_int= int(request.form.get("prox_control"))
+        prox_control_int= int(request.form.get("mes_prox_control"))
         prox_control_date = (datetime.strptime(request.form.get("fecha"), "%Y-%m-%d")) + relativedelta(months=prox_control_int)
         crear_formula(request.form.get("paciente_id"),
                       prox_control=prox_control_date,
+                      mes_prox_control = prox_control_int,
                       fecha = datetime.strptime(request.form.get("fecha"), "%Y-%m-%d"),
                       fecha_vencimiento=datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d"), #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
                       observaciones=request.form.get("observaciones"),
@@ -38,7 +40,8 @@ def crear_formula_route(): #Crea y precarga la lista de las formulas
                       oi_alturabifocal=request.form.get("oi_alturabifocal"),
                       oi_distanciainterpupilar=request.form.get("oi_distanciainterpupilar"),
                       oi_color=request.form.get("oi_color")
-        )
+                
+                      )
         flash("Fórmula creada exitosamente")
         return redirect(url_for("bluep_formulas.crear_formula_route"))
     formulas = listar_formulas()
@@ -55,7 +58,8 @@ def editar_formula_route(id): #EDita y prellena los campos
         resultado = editar_formula(
             id = id,
             paciente_id = request.form.get("paciente_id"),
-            prox_control = (datetime.strptime(request.form.get("fecha"),"%Y-%m-%d") + relativedelta( months = int(request.form.get("prox_control")))),
+            prox_control = (datetime.strptime(request.form.get("fecha"),"%Y-%m-%d") + relativedelta( months = int(request.form.get("mes_prox_control")))),
+            mes_prox_control = int(request.form.get("mes_prox_control")),
             fecha = (datetime.strptime(request.form.get("fecha"), "%Y-%m-%d")),
             fecha_vencimiento = (datetime.strptime(request.form.get("fecha_vencimiento"), "%Y-%m-%d")), #que si el campo fecha_vencimiento no esta vacio, si no esta vacio lo convierte a datetime, si esta vacio lo deja en None
             observaciones = request.form.get("observaciones"),

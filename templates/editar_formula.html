@@ -38,14 +38,11 @@
 
         <div>
           <label class="label-modal">Próximo Control</label>
-          {# OJO: aquí el select manda MESES, no una fecha.
-             Al editar no sabemos cuántos meses se eligieron originalmente,
-             solo la fecha resultante. Por eso arranca sin preselección. #}
-          <select name="prox_control" class="input-modal">
-            <option value="3">3 meses</option>
-            <option value="6">6 meses</option>
-            <option value="12">1 año</option>
-            <option value="24">2 años</option>
+          <select name="mes_prox_control" class="input-modal">
+            <option value="3"  {% if formula.mes_prox_control == 3 %}selected{% endif %}>3 meses</option>
+            <option value="6"  {% if formula.mes_prox_control == 6 %}selected{% endif %}>6 meses</option>
+            <option value="12" {% if formula.mes_prox_control == 12 %}selected{% endif %}>1 año</option>
+            <option value="24" {% if formula.mes_prox_control == 24 %}selected{% endif %}>2 años</option>
           </select>
           <small style="color:#888;">
             Actual: {{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}

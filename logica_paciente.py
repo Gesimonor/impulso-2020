@@ -101,18 +101,6 @@ def validar_duplicado_editar(id, documento):
 
 #print (prueba)  # Imprime None si el paciente ya existe, o el objeto Paciente si no existe
 
-def consultar_paciente(documento = None,nombre = None):
-    with SessionLocal() as db:
-        if documento == None and nombre == None:
-            return None #este es el caso en que no se encuentra el paciente por documento y nombre
-        elif documento:
-            paciente_pordocumento = db.query(Paciente).filter(Paciente.documento == documento).first()  
-            return paciente_pordocumento
-        elif nombre:
-            paciente_pornombre = db.query(Paciente).filter(Paciente.nombre == nombre).all()
-            return paciente_pornombre
-        return paciente_pornombre
-
 
 def buscar_por_id_editar(id):
     with SessionLocal() as db:

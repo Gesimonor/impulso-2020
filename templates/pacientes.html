@@ -20,11 +20,6 @@
   .tabla-pacientes tbody tr:hover { background:#fafafa; }
   .sin-pacientes { text-align:center; color:#aaa; padding:40px; font-size:15px; }
 
-  .btn-editar, .btn-eliminar { border:none; padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; display:inline-block; margin-right:4px; transition:background 0.2s; }
-  .btn-editar { background:#fff3e6; color:#e8590c; }
-  .btn-editar:hover { background:#ffe0c0; }
-  .btn-eliminar { background:#ffe3e3; color:#d9480f; }
-  .btn-eliminar:hover { background:#ffcaca; }
 
   .input-modal { width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; transition:border 0.2s; }
   .input-modal:focus { border-color:#e8590c; }
@@ -82,16 +77,9 @@
               <a href="{{ url_for('bluep_pacientes.ver_paciente_route', id=paciente.id) }}"
                  class="btn-editar">👁️ Ver</a>
 
-              <a href="{{ url_for('bluep_pacientes.editar_paciente_route', id=paciente.id) }}"
-                 class="btn-editar">✏️ Editar</a>
-
               {# Eliminar va en un form POST porque modifica datos #}
               <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}"
                     method="POST" style="display:inline;">
-                <button type="submit" class="btn-eliminar"
-                        onclick="return confirm('¿Seguro que quieres eliminar este paciente?')">
-                  🗑️ Eliminar
-                </button>
               </form>
             </td>
           </tr>

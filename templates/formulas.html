@@ -92,18 +92,9 @@
             <td>{{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}</td>
             <td>{{ formula.observaciones or '-' }}</td>
             <td>
-              <!-- Editar -->
-              <a href="{{ url_for('bluep_formulas.editar_formula_route', id=formula.id) }}"
-                 class="btn-editar">✏️ Editar</a>
-
-              <!-- Eliminar — POST por seguridad -->
-              <form action="{{ url_for('bluep_formulas.eliminar_formula_route', id=formula.id) }}"
-                    method="POST" style="display:inline;">
-                <button type="submit" class="btn-eliminar"
-                        onclick="return confirm('¿Eliminar esta fórmula?')">
-                  🗑️ Eliminar
-                </button>
-              </form>
+              {# Solo Ver — editar y eliminar viven dentro de la ficha #}
+              <a href="{{ url_for('bluep_formulas.ver_formula_route', id=formula.id) }}"
+                 class="btn-editar">👁️ Ver</a>
             </td>
           </tr>
           {% endfor %}

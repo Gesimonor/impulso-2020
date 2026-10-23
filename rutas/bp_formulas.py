@@ -10,10 +10,12 @@ from flask_login import login_required, current_user
 from logica_formulas import crear_formula, consultar_formula_para_editar, editar_formula, eliminar_formula, listar_formulas
 from  datetime import datetime
 from dateutil.relativedelta import relativedelta
-from logica_paciente import consultar_pordatos
+from logica_paciente import consultar_pordatos, buscar_por_id_editar
 
 blueprint_formulas = Blueprint("bluep_formulas", __name__) #le decimos que es un blueprint y que se llama formulas, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de formulas
 
+
+ 
 @blueprint_formulas.route("/formulas", methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
 @login_required
 def crear_formula_route(): #Crea y precarga la lista de las formulas 
@@ -95,4 +97,16 @@ def eliminar_formula_route(id):
         flash("La fórmula no existe")
     return redirect(url_for("bluep_formulas.crear_formula_route"))
 
-        
+@blueprint_formulas.route("/formulas/ver/<int:id>", methods=["GET"])
+@login_required
+def ver_formula_route(id): 
+    formula = consultar_formula_para_editar(id)
+    if formula:
+        paciente = buscar_por_id_editar(formula.paciente_id)
+        return render_template("ver_formula.html",
+                                   usuario=current_user,
+                                   formula=formula,
+                                   paciente=paciente)
+    else:
+        flash("La fórmula no existe")
+        return redirect(url_for("bluep_formulas.crear_formula_route"))

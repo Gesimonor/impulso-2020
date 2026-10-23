@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block titulo %}Ver Fórmula{% endblock %}
+
+{% block titulo_pagina %}Ficha de la Fórmula{% endblock %}
+
+
+{% block estilos %}
+
+  .dato { margin-bottom:14px; }
+  .dato .etiqueta { display:block; font-size:12px; color:#888; margin-bottom:2px; }
+  .dato .valor { font-size:15px; color:#333; }
+
+  .bloque { margin-bottom:24px; }
+  .bloque h3 { color:#d9480f; font-size:16px; margin-bottom:12px; }
+
+  .btn-ver { background:#fff3e6; color:#e8590c; border:none; padding:6px 12px;
+             border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
+  .btn-ver:hover { background:#ffe0c0; }
+
+  /* 4 columnas iguales para los datos generales */
+  .grid-datos { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; }
+
+{% endblock %}
+
+
+{% block contenido %}
+
+  <div class="barra-acciones">
+    {# formula viene del blueprint: render_template(..., formula=formula) #}
+    <h2>Fórmula #{{ formula.id }}</h2>
+
+    {# url_for → nombre de la FUNCIÓN del blueprint, no la URL #}
+    <a href="{{ url_for('bluep_formulas.crear_formula_route') }}" class="btn-cancelar">← Volver</a>
+  </div>
+
+
+  {# ================= PACIENTE =================
+     paciente viene del blueprint: render_template(..., paciente=paciente)
+     El blueprint lo consulta con formula.paciente_id              ================= #}
+  <div class="bloque">
+    <div class="card">
+      <h3>Paciente</h3>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {# campos del modelo Paciente #}
+            <td>{{ paciente.nombre }} {{ paciente.apellido }}</td>
+            <td>{{ paciente.documento }}</td>
+            <td>
+              {# lleva a la ficha del paciente — el id va en la URL #}
+              <a href="{{ url_for('bluep_pacientes.ver_paciente_route', id=paciente.id) }}"
+                 class="btn-ver">👁️ Ver</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  {# ================= DATOS GENERALES =================
+     Todos los campos salen del modelo Formula             ================= #}
+  <div class="bloque">
+    <div class="card">
+      <h3>Datos de la fórmula</h3>
+
+      <div class="grid-datos">
+        <div class="dato">
+          <span class="etiqueta">Fecha de la receta</span>
+          {# strftime convierte el datetime a texto legible. El if evita
+             reventar si el campo viniera vacío #}
+          <span class="valor">{{ formula.fecha.strftime('%d/%m/%Y') if formula.fecha else '-' }}</span>
+        </div>
+
+        <div class="dato">
+          <span class="etiqueta">Vencimiento</span>
+          <span class="valor">{{ formula.fecha_vencimiento.strftime('%d/%m/%Y') if formula.fecha_vencimiento else '-' }}</span>
+        </div>
+
+        <div class="dato">
+          <span class="etiqueta">Próximo control</span>
+          {# OJO: prox_control es la FECHA calculada.
+             mes_prox_control es el número (3, 6, 12, 24) y solo
+             se usa para preseleccionar el select al editar #}
+          <span class="valor">{{ formula.prox_control.strftime('%d/%m/%Y') if formula.prox_control else '-' }}</span>
+        </div>
+
+        <div class="dato">
+          <span class="etiqueta">Tipo</span>
+          {# columna tipo_formula del modelo — hoy siempre dice "propia" #}
+          <span class="valor">{{ formula.tipo_formula }}</span>
+        </div>
+      </div>
+
+      <div class="dato" style="margin-top:14px;">
+        <span class="etiqueta">Observaciones</span>
+        {# "or '-'" muestra un guion cuando el campo está vacío,
+           en vez de escribir la palabra None #}
+        <span class="valor">{{ formula.observaciones or '-' }}</span>
+      </div>
+    </div>
+  </div>
+
+
+  {# ================= GRADUACIÓN =================
+     od_ = ojo derecho / oi_ = ojo izquierdo      ================= #}
+  <div class="bloque">
+    <div class="card">
+      <h3>Graduación</h3>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Ojo</th>
+            <th>Esfera</th>
+            <th>Cilindro</th>
+            <th>Eje</th>
+            <th>Adición</th>
+            <th>Alt. Bifocal</th>
+            <th>Dist. Interpupilar</th>
+            <th>Color</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>O.D</strong></td>
+            <td>{{ formula.od_esfera or '-' }}</td>
+            <td>{{ formula.od_cilindro or '-' }}</td>
+            <td>{{ formula.od_eje or '-' }}</td>
+            <td>{{ formula.od_adicion or '-' }}</td>
+            <td>{{ formula.od_alturabifocal or '-' }}</td>
+            <td>{{ formula.od_distanciainterpupilar or '-' }}</td>
+            <td>{{ formula.od_color or '-' }}</td>
+          </tr>
+          <tr>
+            <td><strong>O.I</strong></td>
+            <td>{{ formula.oi_esfera or '-' }}</td>
+            <td>{{ formula.oi_cilindro or '-' }}</td>
+            <td>{{ formula.oi_eje or '-' }}</td>
+            <td>{{ formula.oi_adicion or '-' }}</td>
+            <td>{{ formula.oi_alturabifocal or '-' }}</td>
+            <td>{{ formula.oi_distanciainterpupilar or '-' }}</td>
+            <td>{{ formula.oi_color or '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  {# ================= ACCIONES ================= #}
+  <div class="botones">
+    {# Editar es un enlace → GET, solo muestra el formulario #}
+    <a href="{{ url_for('bluep_formulas.editar_formula_route', id=formula.id) }}"
+       class="btn-guardar">✏️ Editar</a>
+
+    {# Eliminar va en un form POST porque MODIFICA datos.
+       Un <a> siempre manda GET y aquí no sirve. #}
+    <form action="{{ url_for('bluep_formulas.eliminar_formula_route', id=formula.id) }}"
+          method="POST" style="display:inline;">
+      <button type="submit" class="btn-eliminar"
+              onclick="return confirm('¿Eliminar esta fórmula?')">
+        🗑️ Eliminar
+      </button>
+    </form>
+  </div>
+
+{% endblock %}

@@ -15,8 +15,14 @@ from logica_paciente import consultar_pordatos, buscar_por_id_editar
 blueprint_formulas = Blueprint("bluep_formulas", __name__) #le decimos que es un blueprint y que se llama formulas, el __name__ es para decirle a Flask que este archivo es el que tiene las rutas de formulas
 
 
+@blueprint_formulas.route("/formulas", methods=["GET"])
+@login_required
+def listar_formulas_route():
+    formulas = listar_formulas()
+    return render_template("formulas.html", usuario=current_user, formulas=formulas)
+
  
-@blueprint_formulas.route("/formulas", methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
+@blueprint_formulas.route("/formulas/crear_formula", methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
 @login_required
 def crear_formula_route(): #Crea y precarga la lista de las formulas 
     if request.method == "POST":
@@ -46,8 +52,6 @@ def crear_formula_route(): #Crea y precarga la lista de las formulas
                       )
         flash("Fórmula creada exitosamente")
         return redirect(url_for("bluep_formulas.crear_formula_route"))
-    formulas = listar_formulas()
-    return render_template("formulas.html", usuario=current_user, formulas=formulas)
 
 @blueprint_formulas.route("/formulas/editar/<int:id>", methods=["GET", "POST"]) 
 @login_required

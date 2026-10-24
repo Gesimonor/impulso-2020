@@ -8,7 +8,7 @@ Abrir en el navegador:  http://127.0.0.1:5000
 Info de puertos importante
 0 - 1023    → reservados del sistema, no tocar 
 1024 - 65535 → libres para usar 
-
+l
 Info de IP 
 El rango 127.x.x.x está reservado para localhost:
 

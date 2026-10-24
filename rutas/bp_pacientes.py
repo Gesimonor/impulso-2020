@@ -20,7 +20,7 @@ blueprint_pacientes = Blueprint("bluep_pacientes", __name__) #le decimos que es 
     request.args        → parámetros de la URL (?buscar=juan) esto es GET
  """
 
-@blueprint_pacientes.route("/pacientes",methods=["GET","POST"]) 
+@blueprint_pacientes.route("/pacientes",methods=["GET"]) 
 @login_required
 def listar_pacientes_route ():
     valor_buscar = request.args.get("valor_buscar")

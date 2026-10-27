@@ -81,12 +81,16 @@
            class="btn-guardar">✏️ Editar</a>
     
         <form action="{{ url_for('bluep_pacientes.eliminar_paciente_route', id=paciente.id) }}"
-                    method="POST" style="display:inline;">
-                <button type="submit" class="btn-guardar"
-                        onclick="return confirm('¿Seguro que quieres eliminar este paciente?')">
-                  🗑️ Eliminar
-        </div>
+              method="POST" style="display:inline;">
+          <button type="submit" class="btn-eliminar"
+                  onclick="return confirm('¿Seguro que quieres eliminar este paciente?')">
+            🗑️ Eliminar
+          </button>
+          </div>
+
+      </form>
     </div>
+
 
 
     <!-- ===== COLUMNA DERECHA: las tres tablas ===== -->
@@ -230,8 +234,15 @@
           <!-- TODO: cambiar por <select> con lista de pacientes de la BD -->
         
           <div style="grid-column: span 3;">
-            <label class="label-modal">ID Paciente</label>
-            <input type="number" name="paciente_id" required class="input-modal">
+          <label class="label-modal">Paciente</label>
+
+          {# Campo visible: muestra el nombre completo. NO se envía porque
+            no tiene name y está disabled #}
+          <input type="text" class="input-modal" disabled
+                value="{{ paciente.nombre }} {{ paciente.apellido }} - {{ paciente.documento }}">
+
+          {# Campo oculto: este SÍ se envía a Flask #}
+          <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
           </div>
 
           <div>
@@ -339,7 +350,7 @@
         <!-- BOTONES -->
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
           <button type="button"
-                  onclick="document.getElementById('modal-agregar').style.display='none'"
+                  onclick="document.getElementById('modal-formula').style.display='none'"
                   style="padding:10px 20px; border-radius:10px; border:1px solid #ddd; background:white; cursor:pointer; font-size:14px;">
             Cancelar
           </button>

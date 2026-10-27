@@ -127,10 +127,11 @@
       <form method="POST" action="{{ url_for('bluep_formulas.crear_formula_route') }}">
 
         <!-- DATOS GENERALES -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:16px;">
 
           <!-- TODO: cambiar por <select> con lista de pacientes de la BD -->
-          <div>
+        
+          <div style="grid-column: span 3;">
             <label class="label-modal">ID Paciente</label>
             <input type="number" name="paciente_id" required class="input-modal">
           </div>

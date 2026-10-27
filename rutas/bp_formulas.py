@@ -22,7 +22,7 @@ def listar_formulas_route():
     return render_template("formulas.html", usuario=current_user, formulas=formulas)
 
  
-@blueprint_formulas.route("/formulas/crear_formula", methods=["GET", "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
+@blueprint_formulas.route("/formulas/crear_formula", methods=[ "POST"]) #Get es para traer la pagina y POST es para enviar los datos del formulario
 @login_required
 def crear_formula_route(): #Crea y precarga la lista de las formulas 
     if request.method == "POST":
@@ -51,7 +51,7 @@ def crear_formula_route(): #Crea y precarga la lista de las formulas
                 
                       )
         flash("Fórmula creada exitosamente")
-        return redirect(url_for("bluep_formulas.crear_formula_route"))
+        return redirect(url_for("bluep_formulas.listar_formulas_route"))
 
 @blueprint_formulas.route("/formulas/editar/<int:id>", methods=["GET", "POST"]) 
 @login_required
@@ -59,7 +59,7 @@ def editar_formula_route(id): #EDita y prellena los campos
     formula = consultar_formula_para_editar(id)
     if formula == False:
         flash("La fórmula no existe")
-        return redirect(url_for("bluep_formulas.crear_formula_route"))
+        return redirect(url_for("bluep_formulas.listar_formulas_route"))
     elif request.method == "POST":
         resultado = editar_formula(
             id = id,
@@ -88,7 +88,7 @@ def editar_formula_route(id): #EDita y prellena los campos
             flash("No se pudo editar, la fórmula ya no existe")
         else:
             flash("Fórmula editada exitosamente")
-            return redirect(url_for("bluep_formulas.crear_formula_route"))
+            return redirect(url_for("bluep_formulas.listar_formulas_route"))
         
     return render_template("editar_formula.html",  usuario=current_user,formula=formula) #GET y se usa  usuario=current_user porque en la base.html tenemos un Bienvenido <usuario ese el nombre y debe llenar ese hueco con susuario
 
@@ -99,7 +99,7 @@ def eliminar_formula_route(id):
         flash("Fórmula eliminada exitosamente")
     else:
         flash("La fórmula no existe")
-    return redirect(url_for("bluep_formulas.crear_formula_route"))
+    return redirect(url_for("bluep_formulas.listar_formulas_route"))
 
 @blueprint_formulas.route("/formulas/ver/<int:id>", methods=["GET"])
 @login_required
@@ -113,4 +113,4 @@ def ver_formula_route(id):
                                    paciente=paciente)
     else:
         flash("La fórmula no existe")
-        return redirect(url_for("bluep_formulas.crear_formula_route"))
+        return redirect(url_for("bluep_formulas.listar_formulas_route"))

@@ -1,18 +1,5 @@
 """
-logica_paciente.py
-
-Todo lo relacionado con pacientes, en un solo lugar:
-  - Conexión a la base de datos
-  - El modelo Paciente (el "traductor" entre Python y pacientes.db)
-  - Las funciones para crear, consultar, modificar y eliminar pacientes
-
-Tanto el notebook como la app de Flask importan de aquí, para no repetir
-la misma lógica en dos lugares distintos.
-
-logica_paciente.py  → sabe de BASE DE DATOS
-                      "crea un paciente en la BD"
-                      "busca un paciente"
-                      "elimina un paciente"
+1. COlocar las funcionalidad de los roles
 """
 
 from datetime import datetime

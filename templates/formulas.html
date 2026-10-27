@@ -129,11 +129,17 @@
         <!-- DATOS GENERALES -->
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:16px;">
 
-          <!-- TODO: cambiar por <select> con lista de pacientes de la BD -->
         
           <div style="grid-column: span 3;">
-            <label class="label-modal">ID Paciente</label>
-            <input type="number" name="paciente_id" required class="input-modal">
+            <label class="label-modal">Paciente</label>
+            <select name="paciente_id" required class="input-modal">
+              <option value="">— Seleccione un paciente —</option>
+              {% for paciente in pacientes %}
+                <option value="{{ paciente.id }}">
+                  {{ paciente.nombre }} {{ paciente.apellido }} - {{ paciente.documento }}
+                </option>
+              {% endfor %}
+            </select>
           </div>
 
           <div>

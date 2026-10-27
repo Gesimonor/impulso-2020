@@ -1,7 +1,8 @@
 #COsas por hacer 
 """
-1. Hacer un boton de NUeva formula que quede al lado de los otros botones en Ver al lado de formula
-2. QUItar botones de la lista y dejar en solo ver
+1. Hacer filtro para buscar por fecha de creacion
+2. AGregar fecha de creacion a la vista del listado y el ver_paciente y el usuario , quien lo creo.
+
 """
 
 

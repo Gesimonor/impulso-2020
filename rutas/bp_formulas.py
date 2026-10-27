@@ -1,8 +1,10 @@
 #COsas por hacer
 """
-1. COlocar la fecha de hoy predetermina en el formulario de crear formula Fecha de la receta
-2. Para editar, precargar el dato del proximo control, porque no le puedar una fecha 
-3. La manera de buscar al paciente y anexarlo a la formula. 
+1. COlocar la fecha de hoy predetermina en el formulario de crear formula Fecha de la receta AJUSTAR
+2. La manera de buscar al paciente y anexarlo a la formula. 
+3. Colocar filtro de bsucar por fecha (elegir la fecha ) 
+4. colocar quien creo la formula (nombrel del usuario ) y la fecha de creacion
+
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash

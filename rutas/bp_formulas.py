@@ -116,3 +116,19 @@ def ver_formula_route(id):
     else:
         flash("La fórmula no existe")
         return redirect(url_for("bluep_formulas.listar_formulas_route"))
+
+
+@blueprint_formulas.route("/formulas/buscar-pacientes", methods=["GET"])
+@login_required
+def buscar_pacientes_json():
+    # leer el término
+    dato_a_buscar = request.args.get("valor_buscar")
+    # llamar a consultar_pordatos
+    pacientes = consultar_pordatos(dato_a_buscar)
+
+    for paciente in paciente:
+        
+    # armar la lista de diccionarios
+
+    # return {"pacientes": pcientes}
+    return render_template(, usuario=current_user, pacientes=pacientes)

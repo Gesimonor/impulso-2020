@@ -129,17 +129,24 @@
         <!-- DATOS GENERALES -->
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:16px;">
 
-        
-          <div style="grid-column: span 3;">
+          <div style="grid-column: span 3; position:relative;">
             <label class="label-modal">Paciente</label>
-            <select name="paciente_id" required class="input-modal">
-              <option value="">— Seleccione un paciente —</option>
-              {% for paciente in pacientes %}
-                <option value="{{ paciente.id }}">
-                  {{ paciente.nombre }} {{ paciente.apellido }} - {{ paciente.documento }}
-                </option>
-              {% endfor %}
-            </select>
+
+            {# Aquí escribe el usuario. NO tiene name: no se envía a Flask. #}
+            <input type="text" id="buscador-paciente" class="input-modal"
+                  placeholder="Escriba nombre, apellido o documento"
+                  autocomplete="off">
+
+            {# Aquí el JavaScript va a pintar los resultados. Nace vacío. #}
+            <div id="resultados-pacientes"
+                style="display:none; position:absolute; background:white;
+                        border:1px solid #ddd; border-radius:10px;
+                        width:100%; max-height:200px; overflow-y:auto;
+                        z-index:1000; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            </div>
+
+            {# Este SÍ se envía. El JavaScript le pone el id al elegir. #}
+            <input type="hidden" name="paciente_id" id="paciente-id-elegido" required>
           </div>
 
           <div>
@@ -260,5 +267,79 @@
       </form>
     </div>
   </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+  // Las tres piezas del HTML que vamos a manejar
+  const campoBusqueda = document.getElementById("buscador-paciente");
+  const cajaResultados = document.getElementById("resultados-pacientes");
+  const campoIdOculto  = document.getElementById("paciente-id-elegido");
+
+
+  // "input" se dispara con CADA tecla que el usuario escribe
+  campoBusqueda.addEventListener("input", function() {
+
+    const texto = campoBusqueda.value;
+
+    // Con menos de 2 letras no vale la pena buscar
+    if (texto.length < 2) {
+      cajaResultados.style.display = "none";
+      return;
+    }
+
+    // Pedimos a Flask los pacientes que coinciden
+    fetch("{{ url_for('bluep_formulas.buscar_pacientes_json') }}?valor_buscar=" + texto)
+
+      .then(function(response) {
+        return response.json();
+      })
+
+      .then(function(data) {
+
+        // Vaciamos lo que hubiera de la búsqueda anterior
+        cajaResultados.innerHTML = "";
+
+        if (data.pacientes.length === 0) {
+          cajaResultados.innerHTML = "<div style='padding:10px; color:#888;'>Sin resultados</div>";
+          cajaResultados.style.display = "block";
+          return;
+        }
+
+        // Por cada paciente, creamos una opción en la caja
+        data.pacientes.forEach(function(paciente) {
+
+          const opcion = document.createElement("div");
+          opcion.style.padding = "10px 14px";
+          opcion.style.cursor = "pointer";
+          opcion.textContent = paciente.nombre + " " + paciente.apellido + " - " + paciente.documento;
+
+          // Al pasar el mouse, se resalta
+          opcion.onmouseover = function() { opcion.style.background = "#fff3e6"; };
+          opcion.onmouseout  = function() { opcion.style.background = "white"; };
+
+          // Al hacer clic: guardamos el ID y mostramos el nombre
+          opcion.onclick = function() {
+            campoIdOculto.value = paciente.id;
+            campoBusqueda.value = paciente.nombre + " " + paciente.apellido + " - " + paciente.documento;
+            cajaResultados.style.display = "none";
+          };
+
+          cajaResultados.appendChild(opcion);
+        });
+
+        cajaResultados.style.display = "block";
+      })
+
+      .catch(function(error) {
+        console.error("Error al buscar pacientes:", error);
+      });
+
+  });
+
+</script>
 
 {% endblock %}

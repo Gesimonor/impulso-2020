@@ -125,10 +125,14 @@ def buscar_pacientes_json():
     dato_a_buscar = request.args.get("valor_buscar")
     # llamar a consultar_pordatos
     pacientes = consultar_pordatos(dato_a_buscar)
-
-    for paciente in paciente:
+    diccionario = []
+    for paciente in pacientes:
+        diccionario.append({ #recuerda que debes pasar un diccionario porque solo los diccionarios se pueden convertire a JSON
+            "id": paciente.id, #append es agregar al final
+            "nombre": paciente.nombre,
+            "apellido": paciente.apellido,
+            "documento":paciente.documento
+        }) 
+    
+    return {"pacientes": diccionario}
         
-    # armar la lista de diccionarios
-
-    # return {"pacientes": pcientes}
-    return render_template(, usuario=current_user, pacientes=pacientes)

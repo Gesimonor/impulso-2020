@@ -1,0 +1,135 @@
+{% block modales %}
+
+  <div id="modal-factura" style="
+    display:none; position:fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center; align-items:flex-start;
+    z-index:999; overflow-y:auto; padding:20px;
+  ">
+    <div style="background:white; border-radius:16px; padding:32px; width:900px; max-width:95%; box-shadow:0 8px 32px rgba(0,0,0,0.2); margin:auto;">
+
+      <h3 style="color:#d9480f; margin-bottom:20px;">Nueva Factura</h3>
+
+      {# TODO: crear bp_facturas y apuntar este action allá #}
+      <form method="POST" action="#">
+
+        {# ================= DATOS GENERALES ================= #}
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:14px; margin-bottom:20px;">
+
+          <div>
+            <label class="label-modal">Paciente</label>
+            <input type="text" class="input-modal" disabled
+                   value="{{ paciente.nombre }} {{ paciente.apellido }} - {{ paciente.documento }}">
+            <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+          </div>
+
+          <div>
+            <label class="label-modal">Fecha</label>
+            <input type="date" name="fecha" required class="input-modal" value="{{ today }}">
+          </div>
+
+          <div>
+            <label class="label-modal">Forma de pago</label>
+            <select name="forma_pago" required class="input-modal">
+              <option value="">— Seleccione —</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="nequi_daviplata">Nequi o Daviplata</option>
+              <option value="tarjeta_credito">Tarjeta de crédito</option>
+              <option value="sistecredito">Sistecrédito</option>
+              <option value="transferencia">Transferencia</option>
+            </select>
+          </div>
+
+        </div>
+
+        {# ================= FÓRMULA ASOCIADA =================
+           Opcional: las microventas (un tornillo, un líquido) no llevan fórmula #}
+        <div style="margin-bottom:20px;">
+          <label class="label-modal">Fórmula asociada (opcional)</label>
+          <select name="formula_id" class="input-modal">
+            <option value="">— Sin fórmula (venta libre) —</option>
+            {% for formula in formulas %}
+              <option value="{{ formula.id }}">
+                Fórmula #{{ formula.id }} — {{ formula.fecha.strftime('%d/%m/%Y') if formula.fecha else '' }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+
+        {# ================= PRODUCTOS ================= #}
+        <div style="margin-bottom:20px;">
+          <label class="label-modal">Productos</label>
+
+          <table class="tabla" id="tabla-productos">
+            <thead>
+              <tr>
+                <th style="width:80px;">Cant.</th>
+                <th>Detalle</th>
+                <th style="width:140px;">Valor unitario</th>
+                <th style="width:140px;">Valor total</th>
+                <th style="width:50px;"></th>
+              </tr>
+            </thead>
+            <tbody id="cuerpo-productos">
+              {# El JavaScript crea las filas aquí #}
+            </tbody>
+          </table>
+
+          <button type="button" id="btn-agregar-fila" class="btn-editar"
+                  style="margin-top:10px;">
+            ➕ Agregar producto
+          </button>
+        </div>
+
+
+        {# ================= TOTALES ================= #}
+        <div style="display:grid; grid-template-columns:1fr 300px; gap:20px; margin-bottom:20px;">
+
+          <div>
+            <label class="label-modal">Observaciones</label>
+            <input type="text" name="observaciones" class="input-modal">
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+              <span class="label-modal" style="margin:0;">Total</span>
+              {# readonly: lo calcula el JavaScript, el usuario no lo escribe #}
+              <input type="text" name="total" id="campo-total" readonly
+                     style="border:none; text-align:right; font-weight:600; width:120px;" value="0">
+            </div>
+
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+              <span class="label-modal" style="margin:0;">Abono</span>
+              <input type="number" name="abono" id="campo-abono"
+                     style="border:1px solid #ddd; border-radius:6px; text-align:right; width:120px; padding:4px;" value="0">
+            </div>
+
+            <div style="display:flex; justify-content:space-between; padding:8px 0;">
+              <span class="label-modal" style="margin:0; font-weight:600;">Saldo</span>
+              <input type="text" id="campo-saldo" readonly
+                     style="border:none; text-align:right; font-weight:600; color:#d9480f; width:120px;" value="0">
+            </div>
+          </div>
+
+        </div>
+
+
+        {# ================= BOTONES ================= #}
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button"
+                  onclick="document.getElementById('modal-factura').style.display='none'"
+                  class="btn-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-guardar">
+            Guardar factura
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

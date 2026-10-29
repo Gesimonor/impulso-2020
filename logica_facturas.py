@@ -11,10 +11,11 @@ class Formula(Base):
 
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow)
     forma_pago = Column(String, nullabñe=False)
-    total_pago
+    total_pago = Column(int, nullable=True) #Columna calculada por los datos de detalles_compra
+    estado = Column(String, nullable=False)#Abonada, Cancelada, Sin monto
 
     def __repr__(self):#Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
-        return f"<Paciente {self.nombre} {self.apellido} ({self.correo})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
+        return f"<Formula {self.id})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
 
 
 
@@ -24,13 +25,25 @@ class Detalles_compras(Base):
 
     id = Column(Integer, primary_key=True)
     factura_id = Column(Integer, ForeignKey("formula.id"), nullable=False)
-    cantidad
-    detalle
-    valor_unidad
-    valor_total
+    cantidad = Column(int, nullable=True)
+    detalle = Column(String, nullable=False)
+    valor_unidad = Column(int, nullable=True)
+    valor_total = Column(int, nullable=True)
 
     def __repr__(self):#Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
-        return f"<Paciente {self.nombre} {self.apellido} ({self.correo})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
+        return f"<{self.id})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
 
-    
+
+class abonos(Base):
+    __tablename__ = "abonos"
+
+    id = Column(Integer, nullable=True)
+    factura_id = Column(Integer, ForeignKey("factura.id"), nullable=False)
+
+    pago = Column(int, nullable=True)
+    deuda = Column(int, nullable=True) #Columna calculada por los pagos y el total de la deuda.
+    forma_pago = Column(String, nullable=True)
+
+    def __repr__(self):#Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
+            return f"<{self.id})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion
     

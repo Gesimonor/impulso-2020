@@ -151,7 +151,7 @@
 
       {# href="#" = enlace muerto, no lleva a ningún lado.
          Marcador para módulos que aún no existen. #}
-      <a href="#"><span class="icon">🧾</span> Facturas</a>
+      <a href="{{ url_for('bluep_facturas.listar_facturas_route') }}"><span class="icon">🧾</span> Facturas</a>
       <a href="#"><span class="icon">📅</span> Citas</a>
 
       {# ⚠️ AJUSTAR si renombraste logout #}

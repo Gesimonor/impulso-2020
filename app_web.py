@@ -29,6 +29,7 @@ from flask_login import (
 )
 
 from logica_usuario import Usuario, SessionLocal, buscar_por_correo, verificar_contrasena
+from rutas.bp_facturas import blueprint_facturas
 from infraestructura_db import Base, engine
 
 Base.metadata.create_all(engine)
@@ -39,6 +40,7 @@ app.secret_key = "cambia-esto-por-una-clave-secreta-real" # y esto es super ipor
 # Blueprint
 app.register_blueprint(blueprint_pacientes)#Esta es la que trae el blueprint de pacientes
 app.register_blueprint(blueprint_formulas) #Esta es la que trae el blueprint de formulas
+app.register_blueprint(blueprint_facturas)#POr fin Facturas
 
 
 #ESTO ES CONFIGURACION DE SEGURIDAD QUE VALIDA QUE SIEMPRE SE LOGUEN Y SI NO PUES NO PUEDES ENTRAR A LA APP

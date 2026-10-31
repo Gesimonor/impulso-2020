@@ -1,3 +1,46 @@
+{% extends "base.html" %} 
+{% block titulo %}Facturas{% endblock %}
+{% block titulo_pagina %}Facturas{% endblock %}
+
+{% block contenido %}
+
+  <div class="barra-acciones">
+    <h2>Lista de Facturas</h2>
+    <button type="button" class="btn-agregar"
+            onclick="document.getElementById('modal-factura').style.display='flex'">
+      + Nueva Factura
+    </button>
+  </div>
+
+  <div class="card">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Numero</th>
+          <th>Fecha</th>
+          <th>Nombre</th>
+          <th>Total</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for factura in facturas %}
+      <tr>
+        <td>{{ factura.numero_factura }}</td>
+        <td>{{ factura.fecha.strftime('%d/%m/%Y') if factura.fecha else '-' }}</td>
+        <td>{{ factura.paciente.nombre}}</td>
+        <td>#</td>
+        <td>{{ factura.estado }}</td>
+      </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}
+
 {% block modales %}
 
   <div id="modal-factura" style="
@@ -12,23 +55,39 @@
       <h3 style="color:#d9480f; margin-bottom:20px;">Nueva Factura</h3>
 
       {# TODO: crear bp_facturas y apuntar este action allá #}
-      <form method="POST" action="#">
+      <form method="POST" action="{{ url_for('bluep_facturas.listar_facturas_route') }}">
 
-        {# ================= DATOS GENERALES ================= #}
+              {# ================= DATOS GENERALES ================= #}
         <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:14px; margin-bottom:20px;">
 
-          <div>
+          {# ----- CELDA 1: buscador de paciente ----- #}
+          <div style="position:relative;">
             <label class="label-modal">Paciente</label>
-            <input type="text" class="input-modal" disabled
-                   value="{{ paciente.nombre }} {{ paciente.apellido }} - {{ paciente.documento }}">
-            <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+
+            {# Aquí escribe el usuario. NO tiene name: no se envía a Flask. #}
+            <input type="text" id="buscador-paciente" class="input-modal"
+                   placeholder="Escriba nombre, apellido o documento"
+                   autocomplete="off">
+
+            {# Aquí el JavaScript pinta los resultados. Nace vacío. #}
+            <div id="resultados-pacientes"
+                 style="display:none; position:absolute; background:white;
+                        border:1px solid #ddd; border-radius:10px;
+                        width:100%; max-height:200px; overflow-y:auto;
+                        z-index:1000; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            </div>
+
+            {# Este SÍ se envía. El JavaScript le pone el id al elegir. #}
+            <input type="hidden" name="paciente_id" id="paciente-id-factura" required>
           </div>
 
+          {# ----- CELDA 2: fecha ----- #}
           <div>
             <label class="label-modal">Fecha</label>
             <input type="date" name="fecha" required class="input-modal" value="{{ today }}">
           </div>
 
+          {# ----- CELDA 3: forma de pago ----- #}
           <div>
             <label class="label-modal">Forma de pago</label>
             <select name="forma_pago" required class="input-modal">
@@ -42,7 +101,6 @@
           </div>
 
         </div>
-
         {# ================= FÓRMULA ASOCIADA =================
            Opcional: las microventas (un tornillo, un líquido) no llevan fórmula #}
         <div style="margin-bottom:20px;">
@@ -132,4 +190,149 @@
     </div>
   </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+  /* ==========================================================
+     SECCIÓN 1 — BUSCADOR DE PACIENTE
+     El usuario escribe, JavaScript consulta a Flask y pinta
+     los resultados. Al elegir uno, el ID va al campo oculto.
+     ========================================================== */
+
+  const campoBusqueda  = document.getElementById("buscador-paciente");
+  const cajaResultados = document.getElementById("resultados-pacientes");
+  const campoIdOculto  = document.getElementById("paciente-id-factura");
+
+
+  // "input" se dispara con CADA tecla
+  campoBusqueda.addEventListener("input", function() {
+
+    const texto = campoBusqueda.value;
+
+    // Con menos de 2 letras no vale la pena buscar
+    if (texto.length < 2) {
+      cajaResultados.style.display = "none";
+      return;
+    }
+
+    // Reutilizamos la ruta que ya existe en bp_formulas
+    fetch("{{ url_for('bluep_formulas.buscar_pacientes_json') }}?valor_buscar=" + texto)
+
+      .then(function(response) {
+        return response.json();
+      })
+
+      .then(function(data) {
+
+        // Vaciamos lo de la búsqueda anterior
+        cajaResultados.innerHTML = "";
+
+        if (data.pacientes.length === 0) {
+          cajaResultados.innerHTML = "<div style='padding:10px; color:#888;'>Sin resultados</div>";
+          cajaResultados.style.display = "block";
+          return;
+        }
+
+        data.pacientes.forEach(function(paciente) {
+
+          const opcion = document.createElement("div");
+          opcion.style.padding = "10px 14px";
+          opcion.style.cursor  = "pointer";
+          opcion.textContent   = paciente.nombre + " " + paciente.apellido + " - " + paciente.documento;
+
+          opcion.onmouseover = function() { opcion.style.background = "#fff3e6"; };
+          opcion.onmouseout  = function() { opcion.style.background = "white"; };
+
+          // Al elegir: el ID va al campo oculto, el nombre al visible
+          opcion.onclick = function() {
+            campoIdOculto.value = paciente.id;
+            campoBusqueda.value = paciente.nombre + " " + paciente.apellido + " - " + paciente.documento;
+            cajaResultados.style.display = "none";
+          };
+
+          cajaResultados.appendChild(opcion);
+        });
+
+        cajaResultados.style.display = "block";
+      })
+
+      .catch(function(error) {
+        console.error("Error al buscar pacientes:", error);
+      });
+
+  });
+
+
+  /* ==========================================================
+     SECCIÓN 2 — PRODUCTOS Y TOTALES
+     Filas que se agregan y quitan, con el total calculándose
+     en vivo. OJO: Flask debe recalcular al recibir.
+     ========================================================== */
+
+  const cuerpoProductos  = document.getElementById("cuerpo-productos");
+  const botonAgregarFila = document.getElementById("btn-agregar-fila");
+  const campoTotal       = document.getElementById("campo-total");
+  const campoAbono       = document.getElementById("campo-abono");
+  const campoSaldo       = document.getElementById("campo-saldo");
+
+
+  // Crea una fila nueva de producto
+  function agregarFila() {
+    const fila = document.createElement("tr");
+
+    fila.innerHTML = `
+      <td><input type="number" name="cantidad[]" class="cantidad" value="1" min="1"
+                 style="width:100%; padding:6px; border:1px solid #ddd; border-radius:6px;"></td>
+      <td><input type="text" name="detalle[]"
+                 style="width:100%; padding:6px; border:1px solid #ddd; border-radius:6px;"></td>
+      <td><input type="number" name="valor_unitario[]" class="valor-unitario" value="0" min="0"
+                 style="width:100%; padding:6px; border:1px solid #ddd; border-radius:6px;"></td>
+      <td><span class="valor-total" style="font-weight:600;">0</span></td>
+      <td><button type="button" class="btn-quitar"
+                  style="border:none; background:none; cursor:pointer; color:#d9480f;">✕</button></td>
+    `;
+
+    cuerpoProductos.appendChild(fila);
+
+    // Cada vez que cambien cantidad o precio, recalcular
+    fila.querySelector(".cantidad").addEventListener("input", calcularTodo);
+    fila.querySelector(".valor-unitario").addEventListener("input", calcularTodo);
+
+    // El botón de quitar borra la fila y recalcula
+    fila.querySelector(".btn-quitar").addEventListener("click", function() {
+      fila.remove();
+      calcularTodo();
+    });
+  }
+
+
+  // Recorre todas las filas, calcula cada línea y el total
+  function calcularTodo() {
+    let total = 0;
+
+    cuerpoProductos.querySelectorAll("tr").forEach(function(fila) {
+      const cantidad      = Number(fila.querySelector(".cantidad").value) || 0;
+      const valorUnitario = Number(fila.querySelector(".valor-unitario").value) || 0;
+      const valorLinea    = cantidad * valorUnitario;
+
+      fila.querySelector(".valor-total").textContent = valorLinea;
+      total = total + valorLinea;
+    });
+
+    campoTotal.value = total;
+
+    const abono = Number(campoAbono.value) || 0;
+    campoSaldo.value = total - abono;
+  }
+
+
+  botonAgregarFila.addEventListener("click", agregarFila);
+  campoAbono.addEventListener("input", calcularTodo);
+
+  // Al cargar, empezamos con una fila lista
+  agregarFila();
+
+</script>
 {% endblock %}

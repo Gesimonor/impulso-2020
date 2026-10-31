@@ -10,7 +10,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from logica_formulas import crear_formula, consultar_formula_para_editar, editar_formula, eliminar_formula, listar_formulas
-from  datetime import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from logica_paciente import consultar_pordatos, buscar_por_id_editar
 

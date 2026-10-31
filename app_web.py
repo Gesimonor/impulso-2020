@@ -20,16 +20,18 @@ El rango 127.x.x.x está reservado para localhost:
 http://localhost/      → mismo que 127.0.0.1
 http://127.0.0.1/      → mismo que localhost
 """
-from rutas.bp_pacientes import blueprint_pacientes    #Esto trae he ,importa y trae la carpeta de ruta
-from rutas.bp_formulas import blueprint_formulas    #Esto trae he ,importa y trae la carpeta de ruta
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import (
     LoginManager, UserMixin, login_user, logout_user,
     login_required, current_user,
 )
 
-from logica_usuario import Usuario, SessionLocal, buscar_por_correo, verificar_contrasena
+from rutas.bp_pacientes import blueprint_pacientes    #Esto trae he ,importa y trae la carpeta de ruta
+from rutas.bp_formulas import blueprint_formulas    #Esto trae he ,importa y trae la carpeta de ruta
 from rutas.bp_facturas import blueprint_facturas
+
+from logica_usuario import Usuario, SessionLocal, buscar_por_correo, verificar_contrasena
+from logica_facturas import Factura, Detalles_compras, Abonos
 from infraestructura_db import Base, engine
 
 Base.metadata.create_all(engine)

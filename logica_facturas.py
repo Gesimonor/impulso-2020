@@ -12,7 +12,6 @@ class Factura(Base):
     formula_id = Column(Integer,ForeignKey("formulas.id"), nullable=True) #Opcional
 
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow) #Obligatorio
-    forma_pago = Column(String, nullable=False) #Obligatorio
     estado = Column(String, nullable=False)#Abonada, Cancelada, Sin monto
 
     #Columnas foraneas

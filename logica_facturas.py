@@ -12,7 +12,9 @@ class Factura(Base):
     formula_id = Column(Integer,ForeignKey("formulas.id"), nullable=True) #Opcional
 
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow) #Obligatorio
+    fecha_vencimiento = Column( DateTime, nullable=True, default=datetime)
     estado = Column(String, nullable=False)#Abonada, Cancelada, Sin monto
+    forma_pago = Column(String, nullable=False)
 
     #Columnas foraneas
     paciente = relationship("Paciente")
@@ -40,7 +42,7 @@ class Abonos(Base):
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     pago = Column(Integer, nullable=True)
-    forma_pago = Column(String, nullable=True)
+    medio_pago = Column(String, nullable=True)
 
     def __repr__(self):#Este __repr__ es una variable especial que se encarga de ejecutarse cuando llamas al objeto creado con el molde es bueno para mirar que creaste o que se creo
             return f"<{self.id})>"#el self es un espacio de memoria temporal para almacenar lo que contiene el objeto y posterior ponerlo en la varibale correspodiente es como el carrito que lleva las maletas de la recepion a la habitacion

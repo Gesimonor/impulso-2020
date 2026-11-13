@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, flash
+import datetime
+
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from logica_facturas import listar_facturas, crear_factura
 
@@ -18,7 +20,8 @@ def crear_factura_route():
         formula_id = request.form.get("formula_id"),
 
         #numero_factura es un dato que debe tratarse como el id , debe ser consecutivo
-        fecha = request.form.get("fecha"),
+        fecha = datetime.strptime(request.form.get("fecha"), "%Y-%m-%d"),
+        observacion = request.form.get("observacion"),
 
         #Tabla detalles_compras
         cantidad = request.form.getlist("cantidad[]"),
@@ -26,6 +29,7 @@ def crear_factura_route():
         valor_unitario = request.form.getlist("valor_unitario[]"),
         #tabla de abono
         pago = request.form.get("pago"),
+        forma_pago = request.form.get("forma_pago")
         )
     flash("Factura creada exitosamente") 
-    return
+    return redirect(url_for("bluep_facturas.listar_facturas_route"))

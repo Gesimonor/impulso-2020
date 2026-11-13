@@ -10,11 +10,14 @@ class Factura(Base):
     numero_factura = Column(Integer, nullable=False) #obligatorio
     paciente_id = Column(Integer,ForeignKey("pacientes.id"), nullable=False) #obligatorio
     formula_id = Column(Integer,ForeignKey("formulas.id"), nullable=True) #Opcional
+    detalles_compras_id = Column(Integer, ForeignKey("detalles_compras.id"), nullable=True) #Opcional
+    abonos_id = Column(Integer, ForeignKey("abonos.id"), nullable=True) 
 
     fecha = Column(DateTime, nullable=False, default=datetime.utcnow) #Obligatorio
     fecha_vencimiento = Column( DateTime, nullable=True, default=datetime)
     estado = Column(String, nullable=False)#Abonada, Cancelada, Sin monto
     forma_pago = Column(String, nullable=False)
+    observacion = Column(String, nullable=False)
 
     #Columnas foraneas
     paciente = relationship("Paciente")
@@ -55,3 +58,37 @@ def listar_facturas():
                      .options(joinedload(Factura.paciente))\
                      .order_by(Factura.fecha).limit(20).all()
     return facturas
+
+
+def crear_factura(paciente_id, formula_id, fecha, observacion, cantidad, detalle, valor_unitario, pago, forma_pago):
+    with SessionLocal() as db:
+        nueva_factura = Factura(
+            numero_factura = db.query(Factura).count() + 1,  # Generar un número de factura consecutivo
+            paciente_id=paciente_id, #datos que traigo del html porque ya existen 
+            formula_id=formula_id,  #datos que traigo del html porque ya existen 
+            
+            fecha=fecha,
+            fecha_vencimiento=None,  # Puedes ajustar esto según tus necesidades
+            estado="Sin monto",  # Estado inicial de la factura
+            observacion=observacion,        
+            forma_pago=forma_pago
+            observacion=observacion)
+        
+        db.add(nueva_factura)
+        db.flush() #usamos este porque commit no se ejecuta hasta que se cierre la sesion y necesitamos el id de la factura para crear los detalles de compras
+        
+        crear_detalles_compras(factura.id, cantidad, detalle, valor_unitario)
+    return nueva_factura
+
+def crear_detalles_compras(factura_id, cantidad, detalle, valor_unitario):
+    with SessionLocal() as db:
+        nuevo_detalle = Detalles_compras(
+            factura_id=factura_id,
+            cantidad=cantidad,
+            detalle=detalle,
+            valor_unidad=valor_unitario
+        )
+        db.add(nuevo_detalle)
+        db.commit()
+        db.refresh(nuevo_detalle)
+    return nuevo_detalle

@@ -70,14 +70,13 @@ def crear_factura(paciente_id, formula_id, fecha, observacion, cantidad, detalle
             fecha=fecha,
             fecha_vencimiento=None,  # Puedes ajustar esto según tus necesidades
             estado="Sin monto",  # Estado inicial de la factura
-            observacion=observacion,        
-            forma_pago=forma_pago
+            forma_pago=forma_pago,
             observacion=observacion)
         
         db.add(nueva_factura)
         db.flush() #usamos este porque commit no se ejecuta hasta que se cierre la sesion y necesitamos el id de la factura para crear los detalles de compras
         
-        crear_detalles_compras(factura.id, cantidad, detalle, valor_unitario)
+        crear_detalles_compras(nueva_factura.id, cantidad, detalle, valor_unitario)
     return nueva_factura
 
 def crear_detalles_compras(factura_id, cantidad, detalle, valor_unitario):
@@ -90,5 +89,4 @@ def crear_detalles_compras(factura_id, cantidad, detalle, valor_unitario):
         )
         db.add(nuevo_detalle)
         db.commit()
-        db.refresh(nuevo_detalle)
     return nuevo_detalle

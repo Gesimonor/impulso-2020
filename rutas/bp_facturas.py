@@ -26,7 +26,7 @@ def crear_factura_route():
         #Tabla detalles_compras
         cantidad = request.form.getlist("cantidad[]"),
         detalle = request.form.getlist("detalle[]"),
-        valor_unitario = request.form.getlist("valor_unitario[]"),
+        valor_unidad = request.form.getlist("valor_unitario[]"),
         #tabla de abono
         pago = request.form.get("pago"),
         forma_pago = request.form.get("forma_pago")
